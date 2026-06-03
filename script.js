@@ -22,7 +22,7 @@ class ProductManager {
 
     async loadCategories() {
         try {
-            const response = await fetch('/api/categories');
+            const response = await fetch(apiUrl('/api/categories'));
             if (!response.ok) return;
             const categories = await response.json();
             if (!Array.isArray(categories)) return;
@@ -81,7 +81,7 @@ class ProductManager {
 
     async loadProducts() {
         try {
-            const response = await fetch('/api/products');
+            const response = await fetch(apiUrl('/api/products'));
             const contentType = response.headers.get('content-type');
             
             if (response.ok) {
@@ -136,7 +136,7 @@ class ProductManager {
             };
 
 
-            const response = await fetch('/api/products', {
+            const response = await fetch(apiUrl('/api/products'), {
                 method: 'POST',
                 headers: headers,
                 body: formData
@@ -185,7 +185,7 @@ class ProductManager {
                 ...(typeof authManager !== 'undefined' ? authManager.getAuthHeader() : {})
             };
 
-            const response = await fetch(`/api/products/${id}`, {
+            const response = await fetch(apiUrl(`/api/products/${id}`), {
                 method: 'PUT',
                 headers: headers,
                 body: formData
@@ -214,7 +214,7 @@ class ProductManager {
                 ...authManager.getAuthHeader()
             };
 
-            const response = await fetch(`/api/products/${id}`, {
+            const response = await fetch(apiUrl(`/api/products/${id}`), {
                 method: 'DELETE',
                 headers: headers
             });

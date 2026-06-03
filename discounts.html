@@ -113,7 +113,7 @@
 
             async loadDiscounts() {
                 try {
-                    const response = await fetch('/api/products?discountOnly=true');
+                    const response = await fetch(apiUrl('/api/products?discountOnly=true'));
                     if (response.ok) {
                         this.products = await response.json();
                         this.currentPage = 1;
@@ -281,7 +281,7 @@
                     return;
                 }
                 try {
-                    const response = await fetch('/api/products/' + productId);
+                    const response = await fetch(apiUrl('/api/products/' + productId));
                     if (response.ok) {
                         const product = await response.json();
                         cartManager.addToCart(product);
@@ -304,7 +304,7 @@
                     alert('Помилка: CartManager не ініціалізовано');
                     return;
                 }
-                fetch('/api/products/' + productId)
+                fetch(apiUrl('/api/products/' + productId))
                     .then(res => res.json())
                     .then(product => {
                         if (cartManager.isFavorite(productId)) {

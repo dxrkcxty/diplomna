@@ -1,3 +1,11 @@
+const API_BASE_URL = window.location.hostname.endsWith('vercel.app')
+    ? 'https://diplomna-kpfv.onrender.com'
+    : '';
+
+function apiUrl(path) {
+    return `${API_BASE_URL}${path}`;
+}
+
 class AuthManager {
     constructor() {
         this.token = localStorage.getItem('token');
@@ -21,7 +29,7 @@ class AuthManager {
     async refreshMe() {
         if (!this.isAuthenticated()) return;
         try {
-            const res = await fetch('/api/users/me', { headers: { ...this.getAuthHeader() } });
+            const res = await fetch(apiUrl('/api/users/me'), { headers: { ...this.getAuthHeader() } });
             if (!res.ok) {
                 if (res.status === 401 || res.status === 403) {
                     this.token = null;
@@ -103,7 +111,7 @@ class AuthManager {
     async login(email, password) {
         try {
             const formData = `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-            const response = await fetch('/api/users/login', {
+            const response = await fetch(apiUrl('/api/users/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -150,7 +158,7 @@ class AuthManager {
             const firstName = (document.getElementById('registerFirstName')?.value || '').trim();
             const lastName = (document.getElementById('registerLastName')?.value || '').trim();
             const formData = `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(role)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`;
-            const response = await fetch('/api/users', {
+            const response = await fetch(apiUrl('/api/users'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -596,7 +604,7 @@ class AuthManager {
         if (btn) btn.disabled = true;
         try {
             const body = `firstName=${encodeURIComponent(fn)}&lastName=${encodeURIComponent(ln)}&phone=${encodeURIComponent(ph)}`;
-            const res = await fetch('/api/users/me', {
+            const res = await fetch(apiUrl('/api/users/me'), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...this.getAuthHeader() },
                 body
@@ -637,7 +645,7 @@ class AuthManager {
         if (btn) btn.disabled = true;
         try {
             const body = `currentPassword=${encodeURIComponent(currentPassword)}&newPassword=${encodeURIComponent(newPassword)}`;
-            const res = await fetch('/api/users/me/password', {
+            const res = await fetch(apiUrl('/api/users/me/password'), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...this.getAuthHeader() },
                 body
@@ -666,7 +674,7 @@ class AuthManager {
         if (btn) btn.disabled = true;
         try {
             const body = `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
-            const res = await fetch('/api/users/me/email', {
+            const res = await fetch(apiUrl('/api/users/me/email'), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...this.getAuthHeader() },
                 body

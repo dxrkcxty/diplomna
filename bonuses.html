@@ -292,7 +292,7 @@
             btn.disabled = true;
             btn.textContent = 'Крутимо...';
             try {
-                const res = await fetch(`/api/orders/${spunOrderId}/spin-bonus`, {
+                const res = await fetch(apiUrl(`/api/orders/${spunOrderId}/spin-bonus`), {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${authManager.token}` }
                 });
@@ -364,7 +364,7 @@
             const infoEl = document.getElementById('lastOrderInfo');
             if (!infoEl) return;
             try {
-                const ordersRes = await fetch('/api/orders', { headers: { 'Authorization': `Bearer ${authManager.token}` } });
+                const ordersRes = await fetch(apiUrl('/api/orders'), { headers: { 'Authorization': `Bearer ${authManager.token}` } });
                 if (!ordersRes.ok) {
                     infoEl.textContent = 'Не вдалося завантажити замовлення.';
                     return;

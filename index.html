@@ -247,7 +247,7 @@
             const recoveryEmail = String(document.getElementById('forgotRecoveryEmail')?.value || '').trim();
             if (!accountEmail || !recoveryEmail) return;
             try {
-                const res = await fetch('/api/users/password-reset/request', {
+                const res = await fetch(apiUrl('/api/users/password-reset/request'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `accountEmail=${encodeURIComponent(accountEmail)}&recoveryEmail=${encodeURIComponent(recoveryEmail)}`
@@ -266,7 +266,7 @@
             const newPassword = String(document.getElementById('resetNewPassword')?.value || '');
             if (!email || !code || !newPassword) return;
             try {
-                const res = await fetch('/api/users/password-reset/confirm', {
+                const res = await fetch(apiUrl('/api/users/password-reset/confirm'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `accountEmail=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}&newPassword=${encodeURIComponent(newPassword)}`
@@ -325,7 +325,7 @@
             const el = document.getElementById('catalogCount');
             if (!el) return;
             try {
-                const res = await fetch('/api/products');
+                const res = await fetch(apiUrl('/api/products'));
                 if (!res.ok) return;
                 const products = await res.json();
                 if (Array.isArray(products)) {

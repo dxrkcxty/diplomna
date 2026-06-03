@@ -24,7 +24,7 @@ class ReviewManager {
                 this.renderProductSelect();
                 return;
             }
-            const orderedRes = await fetch('/api/reviews?orderedProducts=1', {
+            const orderedRes = await fetch(apiUrl('/api/reviews?orderedProducts=1'), {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (orderedRes.ok) {
@@ -66,7 +66,7 @@ class ReviewManager {
 
     async loadReviews() {
         try {
-            const response = await fetch('/api/reviews');
+            const response = await fetch(apiUrl('/api/reviews'));
             if (response.ok) {
                 this.reviews = await response.json();
                 this.renderReviews();
@@ -155,7 +155,7 @@ const email = userStr ? JSON.parse(userStr).email : "";
             }
 
 const formData = `productId=${encodeURIComponent(String(productId))}&rating=${encodeURIComponent(rating)}&comment=${encodeURIComponent(comment)}&userEmail=${encodeURIComponent(email)}`;
-            const response = await fetch('/api/reviews', {
+            const response = await fetch(apiUrl('/api/reviews'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -192,7 +192,7 @@ const formData = `productId=${encodeURIComponent(String(productId))}&rating=${en
         if (!confirm('Видалити цей відгук?')) return;
 
         try {
-            const response = await fetch(`/api/reviews/${reviewId}`, {
+            const response = await fetch(apiUrl(`/api/reviews/${reviewId}`), {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`

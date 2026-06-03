@@ -83,7 +83,7 @@
             e.preventDefault();
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
-            const res = await fetch('/api/users/me', {
+            const res = await fetch(apiUrl('/api/users/me'), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...authManager.getAuthHeader() },
                 body: `firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`

@@ -182,7 +182,7 @@
 
             let u = allUsersCache.find(x => Number(x.id) === Number(userId));
             try {
-                const res = await fetch(`/api/users/${userId}`, { headers: { ...authManager.getAuthHeader() } });
+                const res = await fetch(apiUrl(`/api/users/${userId}`), { headers: { ...authManager.getAuthHeader() } });
                 if (res.ok) {
                     u = await res.json();
                 }
@@ -298,7 +298,7 @@
             if (!container) return;
             container.innerHTML = `<div style="color: var(--text-light); padding: 0.75rem 0;">Завантаження...</div>`;
 
-            const res = await fetch('/api/users', {
+            const res = await fetch(apiUrl('/api/users'), {
                 method: 'GET',
                 headers: {
                     ...authManager.getAuthHeader()
@@ -329,7 +329,7 @@
             if (!sel) return;
             const role = sel.value;
 
-            const res = await fetch(`/api/users/${userId}/role`, {
+            const res = await fetch(apiUrl(`/api/users/${userId}/role`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

@@ -139,7 +139,7 @@
 
         async function loadProducts() {
             try {
-                const response = await fetch('/api/products', {
+                const response = await fetch(apiUrl('/api/products'), {
                     headers: {
                         'Authorization': `Bearer ${authManager.token}`
                     }
@@ -358,7 +358,7 @@
             try {
                 for (const product of allProducts) {
                     const formData = buildProductFormData(product, type, value);
-                    const response = await fetch(`/api/products/${product.id}`, {
+                    const response = await fetch(apiUrl(`/api/products/${product.id}`), {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -411,7 +411,7 @@
             }
 
             try {
-                const response = await fetch(`/api/products/${productId}`, {
+                const response = await fetch(apiUrl(`/api/products/${productId}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

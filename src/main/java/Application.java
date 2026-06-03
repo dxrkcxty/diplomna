@@ -17,6 +17,7 @@ import service.CategoryService;
 
 import util.StaticFileHandler;
 import util.StaticFileFilter;
+import util.CorsFilter;
 import util.DatabaseInitializer;
 import util.DatabaseConnection;
 
@@ -158,11 +159,11 @@ public class Application {
         );
         CategoryController categoryController = new CategoryController(categoryService);
 
-        server.createContext("/api/users", userController);
-        server.createContext("/api/categories", categoryController);
-        server.createContext("/api/products", new StaticFileFilter(staticHandler, productController));
-        server.createContext("/api/orders", orderController);
-        server.createContext("/api/reviews", reviewController);
+        server.createContext("/api/users", userController).getFilters().add(new CorsFilter());
+        server.createContext("/api/categories", categoryController).getFilters().add(new CorsFilter());
+        server.createContext("/api/products", new StaticFileFilter(staticHandler, productController)).getFilters().add(new CorsFilter());
+        server.createContext("/api/orders", orderController).getFilters().add(new CorsFilter());
+        server.createContext("/api/reviews", reviewController).getFilters().add(new CorsFilter());
 
         server.createContext("/", staticHandler);
 
