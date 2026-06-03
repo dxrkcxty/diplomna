@@ -24,7 +24,7 @@
                     <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
                 </a>
                 <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link side-link--active">
-                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Керування знижками</span>
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
                 </a>
                 <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
                     <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
@@ -177,7 +177,7 @@
                     discountText = `-${discountAmount.toFixed(0)} грн`;
                 }
                 
-                const imageUrl = normalizeImageUrl(product.imageUrl);
+                const imageUrl = productImageUrl(product);
                 
                 card.innerHTML = `
                     <div style="position: relative;">

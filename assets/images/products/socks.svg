@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-label="Football socks">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecfeff"/><stop offset="1" stop-color="#dcfce7"/></linearGradient></defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <path d="M314 128h138v234c0 46-38 84-84 84h-76c-20 0-34-20-27-39l49-138V128z" fill="#15803d"/>
+  <path d="M486 128h138v234c0 46-38 84-84 84h-76c-20 0-34-20-27-39l49-138V128z" fill="#0f172a"/>
+  <path d="M314 196h138m34 0h138M314 252h138m34 0h138" stroke="#ffffff" stroke-width="18" opacity=".8"/>
+</svg>

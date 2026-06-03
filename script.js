@@ -299,7 +299,7 @@ class ProductManager {
             const displayPrice = product.price ? product.price.toFixed(2) : '0.00';
             const favorite = isFavorite(product.id);
             
-            const imageSrc = this.escapeHtml(normalizeImageUrl(product.imageUrl));
+            const imageSrc = this.escapeHtml(productImageUrl(product));
             const productImage = `<img src="${imageSrc}" alt="${this.escapeHtml(productName)}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 10px;" onerror="handleImageError(this)">`;
             const productCategory = product.categoryName
                 ? `<p><strong>Категорія:</strong> ${this.escapeHtml(product.categoryName)}</p>`

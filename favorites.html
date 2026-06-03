@@ -93,7 +93,7 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const displayPrice = product.price ? product.price.toFixed(2) : '0.00';
-                const imageUrl = normalizeImageUrl(product.imageUrl);
+                const imageUrl = productImageUrl(product);
                 const hasDiscount = product.originalPrice != null && Number(product.originalPrice) > Number(product.price);
                 
                 card.innerHTML = `

@@ -285,7 +285,7 @@
                 const displayPrice = item.price ? item.price.toFixed(2) : '0.00';
                 const quantity = item.quantity || 1;
                 const itemTotal = (item.price * quantity).toFixed(2);
-                const imageUrl = normalizeImageUrl(item.imageUrl);
+                const imageUrl = productImageUrl(item);
                 const hasDiscount = item.originalPrice != null && Number(item.originalPrice) > Number(item.price);
                 
                 card.innerHTML = `

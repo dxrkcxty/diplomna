@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-label="Football protection">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1f5f9"/><stop offset="1" stop-color="#dcfce7"/></linearGradient></defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <path d="M328 132h244c16 0 29 13 28 29l-16 178c-8 89-63 147-134 147s-126-58-134-147l-16-178c-1-16 12-29 28-29z" fill="#15803d"/>
+  <path d="M360 180h180l-12 138c-5 61-36 100-78 100s-73-39-78-100l-12-138z" fill="#f8fafc" opacity=".9"/>
+  <path d="M450 198v202m-62-122h124" stroke="#14532d" stroke-width="18" stroke-linecap="round"/>
+</svg>

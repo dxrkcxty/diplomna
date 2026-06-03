@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-label="Boot bag">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fef3c7"/><stop offset="1" stop-color="#dcfce7"/></linearGradient></defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <path d="M266 238h368c42 0 76 34 76 76v104c0 42-34 76-76 76H266c-42 0-76-34-76-76V314c0-42 34-76 76-76z" fill="#111827"/>
+  <path d="M342 238c8-62 51-102 108-102s100 40 108 102h-48c-8-34-30-54-60-54s-52 20-60 54h-48z" fill="#15803d"/>
+  <rect x="268" y="304" width="364" height="98" rx="26" fill="#15803d"/>
+  <path d="M338 354h224" stroke="#f8fafc" stroke-width="18" stroke-linecap="round"/>
+</svg>

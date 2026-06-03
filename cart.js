@@ -97,7 +97,7 @@ class CartManager {
             price: Number(finalPrice.toFixed(2)),
             discountPercent: discountPercent > 0 ? discountPercent : null,
             discountAmount: discountAmount > 0 ? discountAmount : null,
-            imageUrl: normalizeStoredImageUrl(product.imageUrl),
+            imageUrl: productStoredImageUrl(product),
             size: product.size || '',
             color: product.color || ''
         };

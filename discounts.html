@@ -170,7 +170,7 @@
                         discountText = `-${discountAmount.toFixed(0)} грн`;
                     }
                     
-                    const imageUrl = normalizeImageUrl(product.imageUrl);
+                    const imageUrl = productImageUrl(product);
                     const productName = product.name || 'Товар #' + product.id;
                     const isAuthenticated = typeof authManager !== 'undefined' && authManager.isAuthenticated();
                     const isAdmin = typeof authManager !== 'undefined' && authManager.isAdmin();

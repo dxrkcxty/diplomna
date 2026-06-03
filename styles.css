@@ -157,12 +157,25 @@ body {
     flex-direction: column;
     gap: 0.5rem;
  }
+
+ .sidebar__nav .side-link[href="index.html"] { order: 1; }
+ .sidebar__nav .side-link[href="products.html"] { order: 2; }
+ .sidebar__nav .side-link[href="discounts.html"] { order: 3; }
+ .sidebar__nav .side-link[href="reviews.html"] { order: 4; }
+ .sidebar__nav .side-link[href="bonuses.html"] { order: 5; }
+ .sidebar__nav .side-link[href="favorites.html"] { order: 6; }
+ .sidebar__nav .side-link[href="cart.html"] { order: 7; }
+ .sidebar__nav .side-link[href="orders.html"] { order: 8; }
+ .sidebar__nav .side-link[href="manage-discounts.html"] { order: 9; }
+ .sidebar__nav .side-link[href="users.html"] { order: 10; }
  
  .side-link {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
+    width: 100%;
+    min-height: 60px;
     padding: 0.75rem 0.9rem;
     border-radius: 14px;
     color: white;
@@ -170,14 +183,15 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(10px);
-    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     font-weight: 650;
+    line-height: 1.25;
  }
  
  .side-link:hover {
     background: rgba(255, 255, 255, 0.14);
     border-color: rgba(255, 255, 255, 0.24);
-    transform: translateX(2px);
+    box-shadow: inset 3px 0 0 rgba(255, 255, 255, 0.28);
  }
  
  .side-link--active {
@@ -189,11 +203,15 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
  }
  
  .side-link__icon {
     width: 34px;
     height: 34px;
+    flex: 0 0 34px;
     border-radius: 12px;
     display: inline-flex;
     align-items: center;
