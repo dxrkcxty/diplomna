@@ -67,6 +67,7 @@
     </div>
 
     <script src="auth.js"></script>
+    <script src="image-utils.js"></script>
     <script src="cart.js"></script>
     <script>
         function renderFavorites() {
@@ -92,11 +93,11 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const displayPrice = product.price ? product.price.toFixed(2) : '0.00';
-                const imageUrl = product.imageUrl || '/assets/images/placeholder.svg';
+                const imageUrl = normalizeImageUrl(product.imageUrl);
                 const hasDiscount = product.originalPrice != null && Number(product.originalPrice) > Number(product.price);
                 
                 card.innerHTML = `
-                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="handleImageError(this)">
                     <div class="product-info">
                         <h3>${escapeHtml(product.name || 'Товар #' + product.id)}</h3>
                         ${product.type ? `<p><strong>Тип:</strong> ${escapeHtml(product.type)}</p>` : ''}

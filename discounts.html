@@ -97,6 +97,7 @@
     </div>
 
     <script src="auth.js"></script>
+    <script src="image-utils.js"></script>
     <script src="cart.js"></script>
     <script>
         class DiscountManager {
@@ -169,7 +170,7 @@
                         discountText = `-${discountAmount.toFixed(0)} грн`;
                     }
                     
-                    const imageUrl = product.imageUrl || '/assets/images/placeholder.svg';
+                    const imageUrl = normalizeImageUrl(product.imageUrl);
                     const productName = product.name || 'Товар #' + product.id;
                     const isAuthenticated = typeof authManager !== 'undefined' && authManager.isAuthenticated();
                     const isAdmin = typeof authManager !== 'undefined' && authManager.isAdmin();
@@ -177,7 +178,7 @@
                     
                     card.innerHTML = `
                         <div style="position: relative;">
-                            <img src="${this.escapeHtml(imageUrl)}" alt="${this.escapeHtml(productName)}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                            <img src="${this.escapeHtml(imageUrl)}" alt="${this.escapeHtml(productName)}" class="product-image" onerror="handleImageError(this)">
                             <div class="discount-badge">${discountText}</div>
                         </div>
                         <div class="product-info">

@@ -130,6 +130,7 @@
     </div>
 
     <script src="auth.js"></script>
+    <script src="image-utils.js"></script>
     <script>
         let allProducts = [];
 
@@ -176,11 +177,11 @@
                     discountText = `-${discountAmount.toFixed(0)} грн`;
                 }
                 
-                const imageUrl = product.imageUrl || '/assets/images/placeholder.svg';
+                const imageUrl = normalizeImageUrl(product.imageUrl);
                 
                 card.innerHTML = `
                     <div style="position: relative;">
-                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="handleImageError(this)">
                         ${discountText ? `<div class="discount-badge">${discountText}</div>` : ''}
                     </div>
                     <div class="product-info">
@@ -292,7 +293,7 @@
             formData.append('type', product.type || '');
             formData.append('size', product.size || '');
             formData.append('gender', product.gender || '');
-            formData.append('imageUrl', product.imageUrl || '');
+            formData.append('imageUrl', normalizeStoredImageUrl(product.imageUrl));
             if (type === 'percent') {
                 formData.append('discountPercent', String(value));
                 formData.append('discountAmount', '');
@@ -395,7 +396,7 @@
             formData.append('type', product.type || '');
             formData.append('size', product.size || '');
             formData.append('gender', product.gender || '');
-            formData.append('imageUrl', product.imageUrl || '');
+            formData.append('imageUrl', normalizeStoredImageUrl(product.imageUrl));
 
             if (type === 'percent') {
                 const percent = parseFloat(document.getElementById('discountPercent').value) || 0;

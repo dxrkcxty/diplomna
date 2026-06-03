@@ -227,6 +227,7 @@
     </div>
 
     <script src="auth.js"></script>
+    <script src="image-utils.js"></script>
     <script src="cart.js"></script>
     <script>
         const deliveryOptions = {
@@ -284,11 +285,11 @@
                 const displayPrice = item.price ? item.price.toFixed(2) : '0.00';
                 const quantity = item.quantity || 1;
                 const itemTotal = (item.price * quantity).toFixed(2);
-                const imageUrl = item.imageUrl || '/assets/images/placeholder.svg';
+                const imageUrl = normalizeImageUrl(item.imageUrl);
                 const hasDiscount = item.originalPrice != null && Number(item.originalPrice) > Number(item.price);
                 
                 card.innerHTML = `
-                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name || 'Товар')}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name || 'Товар')}" class="product-image" onerror="handleImageError(this)">
                     <div class="product-info">
                         <h3>${escapeHtml(item.name || 'Товар #' + item.id)}</h3>
                         ${item.type ? `<p><strong>Тип:</strong> ${escapeHtml(item.type)}</p>` : ''}

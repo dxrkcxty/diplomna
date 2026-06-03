@@ -215,7 +215,7 @@ public class ProductController implements HttpHandler {
         String type = prod.type() != null ? escapeJson(prod.type()) : "";
         String size = prod.size() != null ? escapeJson(prod.size()) : "";
         String gender = prod.gender() != null ? escapeJson(prod.gender()) : "";
-        String imageUrl = prod.imageUrl() != null ? escapeJson(prod.imageUrl()) : "";
+        String imageUrl = prod.imageUrl() != null ? escapeJson(normalizeImageUrl(prod.imageUrl())) : "";
         String price = String.format(Locale.US, "%.2f", prod.price());
         String discountPercent = prod.discountPercent() != null ? String.format(Locale.US, "%.2f", prod.discountPercent()) : "null";
         String discountAmount = prod.discountAmount() != null ? String.format(Locale.US, "%.2f", prod.discountAmount()) : "null";
@@ -285,7 +285,7 @@ public class ProductController implements HttpHandler {
         String type = params.getOrDefault("type", "");
         String size = params.getOrDefault("size", "");
         String gender = params.getOrDefault("gender", "");
-        String imageUrl = params.getOrDefault("imageUrl", "");
+        String imageUrl = normalizeImageUrl(params.getOrDefault("imageUrl", ""));
         
         Double discountPercent = null;
         try {
@@ -316,6 +316,23 @@ public class ProductController implements HttpHandler {
                    .replace("\n", "\\n")
                    .replace("\r", "\\r")
                    .replace("\t", "\\t");
+    }
+    private String normalizeImageUrl(String value) {
+        if (value == null) return "";
+        String url = value.trim().replace('\\', '/');
+        if (url.isEmpty()) return "";
+        if (url.startsWith("./assets/")) return url.substring(2);
+        if (url.startsWith("/assets/")) return url.substring(1);
+        if (url.startsWith("//")) return "https:" + url;
+        if (url.toLowerCase(Locale.ROOT).startsWith("www.")) return "https://" + url;
+        String lower = url.toLowerCase(Locale.ROOT);
+        if (lower.startsWith("http://")
+                && !lower.startsWith("http://localhost")
+                && !lower.startsWith("http://127.0.0.1")
+                && !lower.startsWith("http://0.0.0.0")) {
+            return "https://" + url.substring(7);
+        }
+        return url;
     }
     private String toJsonError(ErrorResponse err) {
         return String.format("{\"status\":%d,\"error\":\"%s\",\"message\":\"%s\"}", err.status, escapeJson(err.error), escapeJson(err.message));

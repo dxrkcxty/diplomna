@@ -299,9 +299,8 @@ class ProductManager {
             const displayPrice = product.price ? product.price.toFixed(2) : '0.00';
             const favorite = isFavorite(product.id);
             
-            const fallbackImage = '/assets/images/placeholder.svg';
-            const imageSrc = product.imageUrl ? this.escapeHtml(product.imageUrl) : fallbackImage;
-            const productImage = `<img src="${imageSrc}" alt="${this.escapeHtml(productName)}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 10px;" onerror="this.onerror=null;this.src='${fallbackImage}'">`;
+            const imageSrc = this.escapeHtml(normalizeImageUrl(product.imageUrl));
+            const productImage = `<img src="${imageSrc}" alt="${this.escapeHtml(productName)}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 10px;" onerror="handleImageError(this)">`;
             const productCategory = product.categoryName
                 ? `<p><strong>Категорія:</strong> ${this.escapeHtml(product.categoryName)}</p>`
                 : '';
@@ -538,11 +537,12 @@ class ProductManager {
             const imageUrlInput = document.getElementById('imageUrl');
             if (imageUrlInput) {
                 imageUrlInput.addEventListener('input', (e) => {
-                    const url = e.target.value;
+                    const url = e.target.value.trim();
                     const preview = document.getElementById('imagePreview');
                     const previewImg = document.getElementById('previewImg');
-                    if (url && url.startsWith('http')) {
-                        previewImg.src = url;
+                    if (url) {
+                        previewImg.src = normalizeImageUrl(url);
+                        previewImg.onerror = () => handleImageError(previewImg);
                         preview.style.display = 'block';
                     } else {
                         preview.style.display = 'none';
@@ -623,7 +623,8 @@ class ProductManager {
             
             if (product.imageUrl) {
                 const previewImg = document.getElementById('previewImg');
-                previewImg.src = product.imageUrl;
+                previewImg.src = normalizeImageUrl(product.imageUrl);
+                previewImg.onerror = () => handleImageError(previewImg);
                 imagePreview.style.display = 'block';
             } else {
                 imagePreview.style.display = 'none';
@@ -749,7 +750,7 @@ class ProductManager {
             type: type,
             size: sizeValue,
             gender: genderValue,
-            imageUrl: form.imageUrl.value || ''
+            imageUrl: normalizeStoredImageUrl(form.imageUrl.value || '')
         };
     }
 
