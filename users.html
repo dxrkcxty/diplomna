@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Користувачі</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Адмін панель</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Керування знижками</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link side-link--active" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Користувачі</h1>
+                <div class="topbar__actions">
+                    <button type="button" class="btn" id="reloadUsersBtn">Оновити</button>
+                </div>
+            </div>
+
+            <div class="page">
+                <div style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.25rem; box-shadow: var(--shadow-md);">
+                    <div style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom: 0.75rem;">
+                        <div>
+                            <div style="font-weight:900; font-size: 1.1rem;">Користувачі та профілі</div>
+                            <div style="color: var(--text-light);">Переглядай email, телефон, ПІБ, бонуси та керуй ролями (USER / ADMIN).</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; margin: 0.75rem 0 0.9rem;">
+                        <div style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:flex-end;">
+                            <div style="min-width: 260px;">
+                                <div style="font-size:0.85rem; color: var(--text-light); font-weight:700; margin-bottom:0.25rem;">Пошук</div>
+                                <input id="userSearchInput" type="text" placeholder="ID, email, ім'я, телефон..." style="width:100%; padding:0.65rem 0.8rem; border-radius: 12px; border:1px solid var(--border-color); background: var(--bg-light); color: var(--text-dark);">
+                            </div>
+                            <div style="min-width: 170px;">     
+                                <div style="font-size:0.85rem; color: var(--text-light); font-weight:700; margin-bottom:0.25rem;">Роль</div>
+                                <select id="roleFilterSelect" style="width:100%; padding:0.65rem 0.8rem; border-radius: 12px; border:1px solid var(--border-color); background: var(--bg-light); color: var(--text-dark);">
+                                    <option value="ALL">Усі</option>
+                                    <option value="ADMIN">ADMIN</option>
+                                    <option value="USER">USER</option>
+                                </select>
+                            </div>
+                            <div style="min-width: 190px;">
+                                <div style="font-size:0.85rem; color: var(--text-light); font-weight:700; margin-bottom:0.25rem;">Сортувати</div>
+                                <select id="sortSelect" style="width:100%; padding:0.65rem 0.8rem; border-radius: 12px; border:1px solid var(--border-color); background: var(--bg-light); color: var(--text-dark);">
+                                    <option value="ID_ASC">ID ↑</option>
+                                    <option value="ID_DESC">ID ↓</option>
+                                    <option value="EMAIL_ASC">Email A→Z</option>
+                                    <option value="EMAIL_DESC">Email Z→A</option>
+                                </select>
+                            </div>
+                            <button id="clearFiltersBtn" type="button" class="nav-btn" style="padding:0.65rem 0.9rem;">Очистити</button>
+                        </div>
+                        <div id="usersStats" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; color: var(--text-light); font-weight:800;">
+                            <span style="padding:0.35rem 0.6rem; border-radius: 999px; border:1px solid var(--border-color); background: var(--bg-light);">Всього: —</span>
+                            <span style="padding:0.35rem 0.6rem; border-radius: 999px; border:1px solid var(--border-color); background: var(--bg-light);">ADMIN: —</span>
+                            <span style="padding:0.35rem 0.6rem; border-radius: 999px; border:1px solid var(--border-color); background: var(--bg-light);">USER: —</span>
+                        </div>
+                    </div>
+                    <div id="usersContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="userProfileModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 520px;">
+            <span class="close" id="closeUserProfileModal">&times;</span>
+            <h2 style="margin-bottom: 1rem;">Профіль користувача</h2>
+            <div id="userProfileBody" style="display: grid; gap: 0.65rem;"></div>
+            <div class="modal-buttons" style="margin-top: 1.25rem;">
+                <button type="button" class="btn btn-danger" id="userProfileCloseBtn">Закрити</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function ensureAdminOrRedirect() {
+            const userStr = localStorage.getItem('user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            if (!user || user.role !== 'ADMIN') {
+                window.location.href = 'index.html?admin=1&login=1';
+                return false;
+            }
+            return true;
+        }
+
+        let allUsersCache = [];
+
+        function normalizeRole(role) {
+            return String(role || '').trim().toUpperCase();
+        }
+
+        function fullName(u) {
+            const fn = String(u?.firstName || '').trim();
+            const ln = String(u?.lastName || '').trim();
+            const name = `${fn} ${ln}`.trim();
+            return name || '—';
+        }
+
+        function formatBonus(u) {
+            const bal = Number(u?.bonusBalance || 0);
+            const rate = u?.bonusRate;
+            const spins = Number(u?.spinCredits || 0);
+            const rateText = (rate === null || typeof rate === 'undefined') ? 'не обрано' : `${rate}%`;
+            return `${bal.toFixed(2)} грн • ставка ${rateText} • прокрутки: ${spins}`;
+        }
+
+        function closeUserProfileModal() {
+            const modal = document.getElementById('userProfileModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function renderProfileRow(label, value) {
+            return `
+                <div style="display:grid; grid-template-columns: 140px 1fr; gap:0.5rem; align-items:start;">
+                    <div style="color:var(--text-light); font-weight:700; font-size:0.9rem;">${escapeHtml(label)}</div>
+                    <div style="font-weight:600; word-break:break-word;">${value}</div>
+                </div>
+            `;
+        }
+
+        async function openUserProfile(userId) {
+            if (!ensureAdminOrRedirect()) return;
+            const modal = document.getElementById('userProfileModal');
+            const body = document.getElementById('userProfileBody');
+            if (!modal || !body) return;
+
+            body.innerHTML = '<div style="color:var(--text-light);">Завантаження...</div>';
+            modal.style.display = 'block';
+
+            let u = allUsersCache.find(x => Number(x.id) === Number(userId));
+            try {
+                const res = await fetch(`/api/users/${userId}`, { headers: { ...authManager.getAuthHeader() } });
+                if (res.ok) {
+                    u = await res.json();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            if (!u) {
+                body.innerHTML = '<div style="color:var(--danger-color);">Користувача не знайдено</div>';
+                return;
+            }
+
+            const roleBadge = normalizeRole(u.role) === 'ADMIN'
+                ? '<span style="background:#fef2f2;color:#b91c1c;padding:0.2rem 0.55rem;border-radius:999px;font-size:0.85rem;">ADMIN</span>'
+                : '<span style="background:#ecfdf5;color:#15803d;padding:0.2rem 0.55rem;border-radius:999px;font-size:0.85rem;">USER</span>';
+
+            body.innerHTML = [
+                renderProfileRow('ID', escapeHtml(u.id)),
+                renderProfileRow('Email', escapeHtml(u.email || '—')),
+                renderProfileRow("Ім'я", escapeHtml(u.firstName || '—')),
+                renderProfileRow('Прізвище', escapeHtml(u.lastName || '—')),
+                renderProfileRow('ПІБ', escapeHtml(fullName(u))),
+                renderProfileRow('Телефон', escapeHtml(u.phone || '—')),
+                renderProfileRow('Роль', roleBadge),
+                renderProfileRow('Бонуси', escapeHtml(formatBonus(u)))
+            ].join('');
+        }
+
+        function updateStats(users) {
+            const box = document.getElementById('usersStats');
+            if (!box) return;
+            const total = users.length;
+            const admins = users.filter(u => normalizeRole(u.role) === 'ADMIN').length;
+            const regular = users.filter(u => normalizeRole(u.role) === 'USER').length;
+            box.innerHTML = `
+                <span style="padding:0.35rem 0.6rem; border-radius: 999px; border:1px solid var(--border-color); background: var(--bg-light);">Всього: ${total}</span>
+                <span style="padding:0.35rem 0.6rem; border-radius: 999px; border:1px solid var(--border-color); background: var(--bg-light);">ADMIN: ${admins}</span>
+                <span style="padding:0.35rem 0.6rem; border-radius: 999px; border:1px solid var(--border-color); background: var(--bg-light);">USER: ${regular}</span>
+            `;
+        }
+
+        function applyFiltersAndRender() {
+            const container = document.getElementById('usersContainer');
+            if (!container) return;
+
+            const q = String(document.getElementById('userSearchInput')?.value || '').trim().toLowerCase();
+            const roleFilter = String(document.getElementById('roleFilterSelect')?.value || 'ALL').toUpperCase();
+            const sortMode = String(document.getElementById('sortSelect')?.value || 'ID_ASC').toUpperCase();
+
+            let list = Array.isArray(allUsersCache) ? [...allUsersCache] : [];
+
+            if (roleFilter !== 'ALL') {
+                list = list.filter(u => normalizeRole(u.role) === roleFilter);
+            }
+
+            if (q) {
+                list = list.filter(u => {
+                    const hay = [
+                        u.id, u.email, u.firstName, u.lastName, u.phone, fullName(u)
+                    ].map(v => String(v ?? '').toLowerCase()).join(' ');
+                    return hay.includes(q);
+                });
+            }
+
+            const byId = (a, b) => Number(a.id || 0) - Number(b.id || 0);
+            const byEmail = (a, b) => String(a.email || '').localeCompare(String(b.email || ''), 'uk', { sensitivity: 'base' });
+            if (sortMode === 'ID_DESC') list.sort((a, b) => -byId(a, b));
+            else if (sortMode === 'EMAIL_ASC') list.sort(byEmail);
+            else if (sortMode === 'EMAIL_DESC') list.sort((a, b) => -byEmail(a, b));
+            else list.sort(byId);
+
+            updateStats(list);
+
+            if (list.length === 0) {
+                container.innerHTML = `<div style="color: var(--text-light); padding: 0.75rem 0;">Нічого не знайдено.</div>`;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="users-table-head" style="display:grid; grid-template-columns: 70px minmax(120px,1fr) minmax(160px,1.2fr) 130px 110px 200px; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid var(--border-color); font-weight: 800; font-size: 0.9rem;">
+                    <div>ID</div>
+                    <div>ПІБ</div>
+                    <div>Email</div>
+                    <div>Телефон</div>
+                    <div>Роль</div>
+                    <div>Дії</div>
+                </div>
+                ${list.map(u => `
+                    <div class="users-table-row" style="display:grid; grid-template-columns: 70px minmax(120px,1fr) minmax(160px,1.2fr) 130px 110px 200px; gap: 0.75rem; padding: 0.75rem; align-items:center; border-bottom: 1px solid var(--border-color);">
+                        <div style="color: var(--text-light); font-weight:700;">${escapeHtml(u.id)}</div>
+                        <div style="font-weight:700;">${escapeHtml(fullName(u))}</div>
+                        <div style="word-break:break-all;">${escapeHtml(u.email || '—')}</div>
+                        <div style="font-size:0.92rem;">${escapeHtml(u.phone || '—')}</div>
+                        <div>
+                            <select data-user-id="${escapeHtml(u.id)}" style="width:100%; padding:0.4rem;">
+                                <option value="USER" ${normalizeRole(u.role) === 'USER' ? 'selected' : ''}>USER</option>
+                                <option value="ADMIN" ${normalizeRole(u.role) === 'ADMIN' ? 'selected' : ''}>ADMIN</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                            <button type="button" class="nav-btn" style="padding:0.5rem 0.65rem; flex:1; min-width:88px;" onclick="openUserProfile(${Number(u.id)})">Профіль</button>
+                            <button type="button" class="btn" style="padding:0.5rem 0.65rem; flex:1; min-width:88px;" onclick="saveRole(${Number(u.id)})">Роль</button>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        async function loadUsers() {
+            if (!ensureAdminOrRedirect()) return;
+
+            const container = document.getElementById('usersContainer');
+            if (!container) return;
+            container.innerHTML = `<div style="color: var(--text-light); padding: 0.75rem 0;">Завантаження...</div>`;
+
+            const res = await fetch('/api/users', {
+                method: 'GET',
+                headers: {
+                    ...authManager.getAuthHeader()
+                }
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                container.innerHTML = `<div style="color: var(--danger-color); font-weight:700;">Помилка завантаження користувачів</div><pre style="white-space:pre-wrap; margin-top:0.5rem;">${escapeHtml(text)}</pre>`;
+                return;
+            }
+
+            const users = await res.json();
+            if (!Array.isArray(users) || users.length === 0) {
+                allUsersCache = [];
+                updateStats([]);
+                container.innerHTML = `<div style="color: var(--text-light); padding: 0.75rem 0;">Користувачів немає.</div>`;
+                return;
+            }
+
+            allUsersCache = users;
+            applyFiltersAndRender();
+        }
+
+        async function saveRole(userId) {
+            if (!ensureAdminOrRedirect()) return;
+            const sel = document.querySelector(`select[data-user-id="${userId}"]`);
+            if (!sel) return;
+            const role = sel.value;
+
+            const res = await fetch(`/api/users/${userId}/role`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    ...authManager.getAuthHeader()
+                },
+                body: `role=${encodeURIComponent(role)}`
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                alert(`Помилка: ${text}`);
+                return;
+            }
+            await loadUsers();
+        }
+
+        document.getElementById('reloadUsersBtn')?.addEventListener('click', loadUsers);
+        document.getElementById('userSearchInput')?.addEventListener('input', () => applyFiltersAndRender());
+        document.getElementById('roleFilterSelect')?.addEventListener('change', () => applyFiltersAndRender());
+        document.getElementById('sortSelect')?.addEventListener('change', () => applyFiltersAndRender());
+        document.getElementById('clearFiltersBtn')?.addEventListener('click', () => {
+            const s = document.getElementById('userSearchInput'); if (s) s.value = '';
+            const r = document.getElementById('roleFilterSelect'); if (r) r.value = 'ALL';
+            const so = document.getElementById('sortSelect'); if (so) so.value = 'ID_ASC';
+            applyFiltersAndRender();
+        });
+        document.getElementById('closeUserProfileModal')?.addEventListener('click', closeUserProfileModal);
+        document.getElementById('userProfileCloseBtn')?.addEventListener('click', closeUserProfileModal);
+        document.getElementById('userProfileModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'userProfileModal') closeUserProfileModal();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof authManager !== 'undefined') authManager.updateUI();
+            loadUsers();
+            updateStats([]);
+        });
+    </script>
+</body>
+</html>
+

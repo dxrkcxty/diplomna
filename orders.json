@@ -1,0 +1,12 @@
+{
+  "nextId": 10,
+  "orders": [
+    {
+      "id": 9,
+      "userId": 4,
+      "date": "2025-12-12 09:52:18",
+      "status": "Нове",
+      "productIds": [2]
+    }
+  ]
+}

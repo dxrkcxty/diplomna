@@ -1,0 +1,831 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Замовлення</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .orders-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .order-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+        .order-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .order-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .order-info-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .order-info-value {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .order-status {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .order-status.new {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .order-status.sent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .order-products {
+            margin-top: 1rem;
+        }
+        .order-product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        .empty-orders {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+        .empty-orders h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        .chat-messages {
+            max-height: 360px;
+            overflow: auto;
+            border: 1px solid var(--border-color);
+            background: var(--bg-light);
+            border-radius: 14px;
+            padding: 0.75rem;
+        }
+        .chat-msg {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 0.65rem 0.75rem;
+            margin-bottom: 0.6rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .chat-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+        .chat-text {
+            white-space: pre-wrap;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        .orders-view-switch {
+            display: inline-flex;
+            gap: 0.5rem;
+            padding: 0.35rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-white);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1rem;
+        }
+        .orders-view-btn {
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-light);
+            font-weight: 800;
+            border-radius: 10px;
+            padding: 0.5rem 0.9rem;
+            cursor: pointer;
+        }
+        .orders-view-btn--active {
+            color: white;
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .orders-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        @media (max-width: 520px) {
+            .orders-stats-grid { grid-template-columns: 1fr; }
+        }
+        .orders-stat-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+        }
+        .orders-stat-card span {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+        .orders-stat-card strong {
+            font-size: 1.35rem;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+        .orders-stat-card--accent {
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.12), rgba(34, 197, 94, 0.08));
+            border-color: rgba(21, 128, 61, 0.25);
+        }
+        .orders-stat-card--accent strong {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Замовлення</h1>
+                <div class="topbar__actions">
+                    <button type="button" id="ordersStatsBtn" class="btn" style="display:none;">📊 Статистика магазину</button>
+                </div>
+            </div>
+            <div class="page">
+                <div class="orders-container" style="max-width:none; padding:0; margin:0;">
+                    <h2 id="ordersTitle" style="margin-bottom: 1rem; font-size: 1.75rem; color: var(--text-dark);">Всі замовлення</h2>
+                    <div id="ordersViewSwitch" class="orders-view-switch" style="display:none;">
+                        <button type="button" id="viewNewOrdersBtn" class="orders-view-btn orders-view-btn--active">Нові замовлення</button>
+                        <button type="button" id="viewHistoryOrdersBtn" class="orders-view-btn">Історія замовлень</button>
+                    </div>
+                    <div id="ordersContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ordersStatsModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 640px;">
+            <span class="close" id="closeOrdersStatsModal">&times;</span>
+            <h2 style="margin-bottom: 0.35rem;">Статистика замовлень</h2>
+            <p style="color: var(--text-light); margin-bottom: 1rem; font-size: 0.95rem;">Виручка: оплата карткою — одразу; готівка у відділенні — після підтвердження оплати адміном. Загальна кількість замовлень — по всіх записах.</p>
+            <div id="ordersStatsBody" class="orders-stats-grid"></div>
+            <div class="modal-buttons" style="margin-top: 1.25rem;">
+                <button type="button" class="btn btn-danger" id="ordersStatsCloseBtn">Закрити</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="chatModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 720px;">
+            <span class="close" onclick="closeChatModal()">&times;</span>
+            <h2>Чат по замовленню <span id="chatOrderIdLabel"></span></h2>
+            <div id="chatMessages" class="chat-messages"></div>
+            <form id="chatForm" style="margin-top: 1rem;">
+                <div class="form-group">
+                    <label for="chatMessageInput">Повідомлення:</label>
+                    <textarea id="chatMessageInput" rows="3" required placeholder="Напишіть повідомлення..."></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-danger" onclick="closeChatModal()">Закрити</button>
+                    <button type="submit" class="btn">Надіслати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        let allOrders = [];
+        let adminOrdersView = 'new'; // new | history
+        let userOrdersView = 'pending'; // pending | sent
+        let selectedChatOrderId = null;
+
+        async function loadOrders() {
+            if (!authManager.isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/orders', {
+                    headers: {
+                        'Authorization': `Bearer ${authManager.token}`
+                    }
+                });
+
+                if (response.ok) {
+                    allOrders = await response.json();
+                    renderOrders(allOrders);
+                } else {
+                    console.error('Помилка завантаження замовлень:', response.status);
+                    document.getElementById('ordersContainer').innerHTML = 
+                        '<div class="empty-orders"><h2>Помилка завантаження замовлень</h2></div>';
+                }
+            } catch (error) {
+                console.error('Помилка завантаження замовлень:', error);
+                document.getElementById('ordersContainer').innerHTML = 
+                    '<div class="empty-orders"><h2>Помилка з\'єднання з сервером</h2></div>';
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('ordersContainer');
+            if (!container) return;
+            const role = authManager && authManager.user ? authManager.user.role : null;
+            const isAdmin = role === 'ADMIN';
+            const switchWrap = document.getElementById('ordersViewSwitch');
+            const titleEl = document.getElementById('ordersTitle');
+
+            let list = Array.isArray(orders) ? [...orders] : [];
+            if (switchWrap) switchWrap.style.display = 'inline-flex';
+            if (isAdmin) {
+                if (adminOrdersView === 'new') {
+                    list = list.filter(o => String(o.status || '').toLowerCase() !== 'відправлено');
+                    if (titleEl) titleEl.textContent = 'Нові замовлення';
+                } else {
+                    list = list.filter(o => String(o.status || '').toLowerCase() === 'відправлено');
+                    if (titleEl) titleEl.textContent = 'Історія замовлень';
+                }
+            } else {
+                if (userOrdersView === 'pending') {
+                    list = list.filter(o => String(o.status || '').toLowerCase() !== 'відправлено');
+                    if (titleEl) titleEl.textContent = 'Чекають відправки';
+                } else {
+                    list = list.filter(o => String(o.status || '').toLowerCase() === 'відправлено');
+                    if (titleEl) titleEl.textContent = 'Відправлено';
+                }
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = isAdmin
+                    ? (adminOrdersView === 'new'
+                        ? '<div class="empty-orders"><h2>Нових замовлень немає</h2><p>Коли користувачі оформлять нові замовлення, вони з\'являться тут</p></div>'
+                        : '<div class="empty-orders"><h2>Історія порожня</h2><p>Відправлені замовлення з\'являться тут</p></div>')
+                    : (userOrdersView === 'pending'
+                        ? '<div class="empty-orders"><h2>Немає замовлень, що чекають відправки</h2><p>Коли адміністрація відправить замовлення, вони перейдуть у “Відправлено”</p></div>'
+                        : '<div class="empty-orders"><h2>Немає відправлених замовлень</h2><p>Після підтвердження замовлення з\'явиться тут</p></div>');
+                return;
+            }
+
+            container.innerHTML = '';
+            list.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                
+                const orderItems = Array.isArray(order.items) && order.items.length
+                    ? order.items
+                    : [];
+                const totalFromOrder = Number(order.totalAmount || 0);
+                const totalFallback = orderItems.reduce((sum, it) => sum + Number(it.price || 0), 0);
+                const total = totalFromOrder > 0 ? totalFromOrder : totalFallback;
+                const bonusUsed = Number(order.bonusUsed || 0);
+                const payTotal = Math.max(0, total - (isFinite(bonusUsed) ? bonusUsed : 0));
+                const bonusEarned = Number(order.bonusEarned || 0);
+                const bonusRate = (typeof order.bonusRate === 'number') ? order.bonusRate : null;
+                
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-info">
+                            <div class="order-info-item">
+                                <span class="order-info-label">ID замовлення</span>
+                                <span class="order-info-value">#${order.id}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">ID користувача</span>
+                                <span class="order-info-value">${order.userId}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Дата</span>
+                                <span class="order-info-value">${order.date || 'Невідома'}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Сума</span>
+                                <span class="order-info-value">${total.toFixed(2)} грн</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Бонуси</span>
+                                <span class="order-info-value">-${(isFinite(bonusUsed) ? bonusUsed : 0).toFixed(2)} грн • +${(isFinite(bonusEarned) ? bonusEarned : 0).toFixed(2)} грн ${bonusRate === null ? '' : `(${bonusRate}%)`}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">До сплати</span>
+                                <span class="order-info-value">${payTotal.toFixed(2)} грн</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">ПІБ</span>
+                                <span class="order-info-value">${escapeHtml(order.fullName || 'Не вказано')}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Телефон</span>
+                                <span class="order-info-value">${escapeHtml(order.phone || 'Не вказано')}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Пошта</span>
+                                <span class="order-info-value">${escapeHtml(order.deliveryCarrier || 'Не вказано')}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Відділення</span>
+                                <span class="order-info-value">${escapeHtml(order.deliveryBranch || 'Не вказано')}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Адреса</span>
+                                <span class="order-info-value">${escapeHtml(order.deliveryAddress || 'Не вказано')}</span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Оплата</span>
+                                <span class="order-info-value">${escapeHtml(order.paymentMethod || 'Не вказано')} (${escapeHtml(getOrderPaymentStatus(order) || 'Невідомо')})</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;">
+                            <div class="order-status ${order.status === 'Відправлено' ? 'sent' : 'new'}">${order.status || 'Нове'}</div>
+                            ${isAdmin && order.status !== 'Відправлено' ? `<button class="btn" onclick="shipOrder(${order.id})" style="margin-top: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem;">Відправити</button>` : ''}
+                            ${isAdmin && !isOnlinePayment(order) && !isOrderPaidForStats(order) ? `<button class="btn" onclick="confirmOrderPayment(${order.id})" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: #15803d;">Підтвердити оплату</button>` : ''}
+                            <button class="btn" onclick="openChatModal(${order.id})" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Чат</button>
+                        </div>
+                    </div>
+                    <div class="order-products">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-dark);">Товари:</h3>
+                        ${orderItems.map(item => {
+                            const linePrice = Number(item.price || 0);
+                            const meta = [
+                                item.size ? `розмір ${escapeHtml(item.size)}` : '',
+                                item.color ? `колір ${escapeHtml(item.color)}` : ''
+                            ].filter(Boolean).join(' • ');
+                            return `
+                            <div class="order-product">
+                                <span>
+                                    <strong>${escapeHtml(item.name || ('Товар #' + (item.productId || '')))}</strong>
+                                    ${meta ? ` <span style="color: var(--text-light); font-size: 0.92rem;">(${meta})</span>` : ''}
+                                    — <span style="font-weight: 700; color: var(--primary-color);">${linePrice.toFixed(2)} грн</span>
+                                </span>
+                            </div>
+                        `;
+                        }).join('')}
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+
+        function getOrderMoney(order) {
+            const orderItems = Array.isArray(order.items) && order.items.length ? order.items : [];
+            const totalFromOrder = Number(order.totalAmount || 0);
+            const totalFallback = orderItems.reduce((sum, it) => sum + Number(it.price || 0), 0);
+            const total = totalFromOrder > 0 ? totalFromOrder : totalFallback;
+            const bonusUsed = Number(order.bonusUsed || 0);
+            const payTotal = Math.max(0, total - (isFinite(bonusUsed) ? bonusUsed : 0));
+            const itemsCount = orderItems.length || (order.productIds || []).length;
+            return { total, bonusUsed, payTotal, itemsCount };
+        }
+
+        function getOrderPaymentStatus(order) {
+            return String(order.paymentStatus || order.payment_status || '').trim();
+        }
+
+        function isOnlinePayment(order) {
+            const method = String(order.paymentMethod || order.payment_method || '').toLowerCase();
+            return method.includes('онлайн') || method.includes('карт');
+        }
+
+        function isOrderPaidForStats(order) {
+            const ps = getOrderPaymentStatus(order).toLowerCase();
+            if (!ps) {
+                return isOnlinePayment(order);
+            }
+            if (ps.includes('оплач') && !ps.includes('при отриманні')) {
+                return true;
+            }
+            if (ps.includes('оплата при отриманні') || ps.includes('очікує')) {
+                return false;
+            }
+            return isOnlinePayment(order);
+        }
+
+        function mergeOrderUpdate(updated) {
+            if (!updated || updated.id == null) return;
+            const id = Number(updated.id);
+            const idx = allOrders.findIndex(o => Number(o.id) === id);
+            const merged = idx >= 0 ? { ...allOrders[idx], ...updated } : updated;
+            if (idx >= 0) {
+                allOrders[idx] = merged;
+            } else {
+                allOrders.push(merged);
+            }
+            return merged;
+        }
+
+        function buildOrdersStats(orders) {
+            const list = Array.isArray(orders) ? orders : [];
+            let revenue = 0;
+            let gross = 0;
+            let bonusUsedSum = 0;
+            let bonusEarnedSum = 0;
+            let itemsSold = 0;
+            let newCount = 0;
+            let sentCount = 0;
+            let paidOnline = 0;
+            let paidOnDelivery = 0;
+            let paidOrdersCount = 0;
+            let pendingCashCount = 0;
+            let pendingCashSum = 0;
+            const uniqueUsers = new Set();
+
+            list.forEach((order) => {
+                const status = String(order.status || '').toLowerCase();
+                if (status === 'відправлено') sentCount++;
+                else newCount++;
+
+                const money = getOrderMoney(order);
+                const paid = isOrderPaidForStats(order);
+                const online = isOnlinePayment(order);
+
+                if (paid) {
+                    revenue += money.payTotal;
+                    gross += money.total;
+                    bonusUsedSum += money.bonusUsed;
+                    bonusEarnedSum += Number(order.bonusEarned || 0);
+                    itemsSold += money.itemsCount;
+                    paidOrdersCount++;
+                    if (online) paidOnline++;
+                    else paidOnDelivery++;
+                } else if (!online) {
+                    pendingCashCount++;
+                    pendingCashSum += money.payTotal;
+                }
+
+                if (order.userId != null) uniqueUsers.add(String(order.userId));
+            });
+
+            const total = list.length;
+            const avgCheck = paidOrdersCount > 0 ? revenue / paidOrdersCount : 0;
+
+            return {
+                total,
+                newCount,
+                sentCount,
+                revenue,
+                gross,
+                bonusUsedSum,
+                bonusEarnedSum,
+                itemsSold,
+                avgCheck,
+                paidOnline,
+                paidOnDelivery,
+                paidOrdersCount,
+                pendingCashCount,
+                pendingCashSum,
+                uniqueUsers: uniqueUsers.size
+            };
+        }
+
+        function statCard(label, value, accent) {
+            return `
+                <div class="orders-stat-card${accent ? ' orders-stat-card--accent' : ''}">
+                    <span>${label}</span>
+                    <strong>${value}</strong>
+                </div>
+            `;
+        }
+
+        function renderOrdersStatsBody() {
+            const body = document.getElementById('ordersStatsBody');
+            if (!body) return;
+            const s = buildOrdersStats(allOrders);
+            body.innerHTML = [
+                statCard('Всього замовлень', String(s.total), false),
+                statCard('У виручці (оплачені)', String(s.paidOrdersCount), false),
+                statCard('Нові (не відправлені)', String(s.newCount), false),
+                statCard('Відправлені', String(s.sentCount), false),
+                statCard('Унікальних клієнтів', String(s.uniqueUsers), false),
+                statCard('Заробили (отримано)', `${s.revenue.toFixed(2)} грн`, true),
+                statCard('Очікує оплати (готівка)', `${s.pendingCashSum.toFixed(2)} грн (${s.pendingCashCount})`, false),
+                statCard('Сума товарів (оплачені)', `${s.gross.toFixed(2)} грн`, false),
+                statCard('Списано бонусами', `${s.bonusUsedSum.toFixed(2)} грн`, false),
+                statCard('Нараховано бонусів', `${s.bonusEarnedSum.toFixed(2)} грн`, false),
+                statCard('Середній чек (оплачені)', `${s.avgCheck.toFixed(2)} грн`, false),
+                statCard('Товарів (оплачені)', String(s.itemsSold), false),
+                statCard('Оплачено карткою', String(s.paidOnline), false),
+                statCard('Оплачено у відділенні', String(s.paidOnDelivery), false)
+            ].join('');
+        }
+
+        function refreshOrdersStatsIfOpen() {
+            const modal = document.getElementById('ordersStatsModal');
+            if (modal && modal.style.display === 'block') {
+                renderOrdersStatsBody();
+            }
+        }
+
+        function openOrdersStatsModal() {
+            const modal = document.getElementById('ordersStatsModal');
+            if (!modal) return;
+            renderOrdersStatsBody();
+            modal.style.display = 'block';
+        }
+
+        function closeOrdersStatsModal() {
+            const modal = document.getElementById('ordersStatsModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function confirmOrderPayment(orderId) {
+            if (!authManager.isAdmin()) {
+                alert('Недостатньо прав');
+                return;
+            }
+            if (!confirm('Підтвердити, що клієнт оплатив замовлення у відділенні? Сума потрапить у статистику виручки.')) {
+                return;
+            }
+            try {
+                const response = await fetch(`/api/orders/${orderId}/confirm-payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authManager.token}`
+                    }
+                });
+                const responseText = await response.text();
+                if (response.ok) {
+                    try {
+                        const updated = JSON.parse(responseText);
+                        mergeOrderUpdate(updated);
+                    } catch (e) {
+                        /* ignore parse */
+                    }
+                    await loadOrders();
+                    refreshOrdersStatsIfOpen();
+                } else {
+                    try {
+                        const error = JSON.parse(responseText);
+                        alert('Помилка: ' + (error.message || error.error || 'Невідома помилка'));
+                    } catch (e) {
+                        alert('Помилка: ' + responseText);
+                    }
+                }
+            } catch (error) {
+                console.error('Помилка підтвердження оплати:', error);
+                alert('Помилка з\'єднання з сервером');
+            }
+        }
+
+        async function shipOrder(orderId) {
+            if (!authManager.isAdmin()) {
+                alert('Недостатньо прав');
+                return;
+            }
+            if (!confirm('Відправити це замовлення?')) {
+                return;
+            }
+
+            try {
+                const url = `/api/orders/${orderId}`;
+                
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authManager.token}`
+                    },
+                    body: JSON.stringify({ status: 'Відправлено' })
+                });
+
+                const responseText = await response.text();
+
+                if (response.ok) {
+                    try {
+                        mergeOrderUpdate(JSON.parse(responseText));
+                    } catch (e) { /* ignore */ }
+                    await loadOrders();
+                    refreshOrdersStatsIfOpen();
+                } else {
+                    try {
+                        const error = JSON.parse(responseText);
+                        alert('Помилка відправки замовлення: ' + (error.message || error.error || 'Невідома помилка'));
+                    } catch (e) {
+                        alert('Помилка відправки замовлення: ' + responseText);
+                    }
+                }
+            } catch (error) {
+                console.error('Помилка відправки замовлення:', error);
+                alert('Помилка з\'єднання з сервером: ' + error.message);
+            }
+        }
+
+        function closeChatModal() {
+            document.getElementById('chatModal').style.display = 'none';
+            selectedChatOrderId = null;
+        }
+
+        async function openChatModal(orderId) {
+            selectedChatOrderId = orderId;
+            document.getElementById('chatOrderIdLabel').textContent = `#${orderId}`;
+            document.getElementById('chatMessageInput').value = '';
+            document.getElementById('chatMessages').innerHTML = '<div style="color: var(--text-light);">Завантаження...</div>';
+            document.getElementById('chatModal').style.display = 'block';
+            await loadChatMessages(orderId);
+        }
+
+        async function loadChatMessages(orderId) {
+            const box = document.getElementById('chatMessages');
+            const res = await fetch(`/api/orders/${orderId}/messages`, { headers: { ...authManager.getAuthHeader() } });
+            if (!res.ok) {
+                const text = await res.text();
+                box.innerHTML = `<div style="color: var(--danger-color); font-weight:800;">Помилка завантаження чату</div><pre style="white-space:pre-wrap; margin-top:0.5rem;">${escapeHtml(text)}</pre>`;
+                return;
+            }
+            const msgs = await res.json();
+            if (!Array.isArray(msgs) || msgs.length === 0) {
+                box.innerHTML = `<div style="color: var(--text-light);">Повідомлень поки немає. Напишіть першим.</div>`;
+                return;
+            }
+            box.innerHTML = msgs.map(m => `
+                <div class="chat-msg">
+                    <div class="chat-meta">
+                        <span><strong>${escapeHtml(m.senderRole || '')}</strong> — ${escapeHtml(maskEmail(m.senderEmail || ''))}</span>
+                        <span>${escapeHtml(m.createdAt || '')}</span>
+                    </div>
+                    <div class="chat-text">${escapeHtml(m.message || '')}</div>
+                </div>
+            `).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function maskEmail(email) {
+            const e = String(email || '').trim();
+            const at = e.indexOf('@');
+            if (at <= 1) return '***';
+            const name = e.slice(0, at);
+            const domain = e.slice(at);
+            const visible = name.slice(0, 2);
+            return `${visible}***${domain}`;
+        }
+
+        document.getElementById('chatForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!selectedChatOrderId) return;
+            const input = document.getElementById('chatMessageInput');
+            const message = (input.value || '').trim();
+            if (!message) return;
+            const res = await fetch(`/api/orders/${selectedChatOrderId}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...authManager.getAuthHeader() },
+                body: JSON.stringify({ message })
+            });
+            if (!res.ok) {
+                alert('Не вдалося надіслати повідомлення');
+                return;
+            }
+            input.value = '';
+            await loadChatMessages(selectedChatOrderId);
+        });
+
+        function showUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '1';
+                menu.style.visibility = 'visible';
+                menu.style.transform = 'translateY(0)';
+            }
+        }
+
+        function hideUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '0';
+                menu.style.visibility = 'hidden';
+                menu.style.transform = 'translateY(-10px)';
+            }
+        }
+
+        if (!authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        } else {
+            authManager.updateUI();
+            const isAdmin = authManager.user && authManager.user.role === 'ADMIN';
+            const statsBtn = document.getElementById('ordersStatsBtn');
+            if (statsBtn) statsBtn.style.display = isAdmin ? 'inline-block' : 'none';
+            statsBtn?.addEventListener('click', openOrdersStatsModal);
+            document.getElementById('closeOrdersStatsModal')?.addEventListener('click', closeOrdersStatsModal);
+            document.getElementById('ordersStatsCloseBtn')?.addEventListener('click', closeOrdersStatsModal);
+            document.getElementById('ordersStatsModal')?.addEventListener('click', (e) => {
+                if (e.target.id === 'ordersStatsModal') closeOrdersStatsModal();
+            });
+            const newBtn = document.getElementById('viewNewOrdersBtn');
+            const historyBtn = document.getElementById('viewHistoryOrdersBtn');
+
+            const syncViewButtons = () => {
+                if (isAdmin) {
+                    if (newBtn) newBtn.textContent = 'Нові замовлення';
+                    if (historyBtn) historyBtn.textContent = 'Історія замовлень';
+                    newBtn?.classList.toggle('orders-view-btn--active', adminOrdersView === 'new');
+                    historyBtn?.classList.toggle('orders-view-btn--active', adminOrdersView === 'history');
+                } else {
+                    if (newBtn) newBtn.textContent = 'Чекають відправки';
+                    if (historyBtn) historyBtn.textContent = 'Відправлено';
+                    newBtn?.classList.toggle('orders-view-btn--active', userOrdersView === 'pending');
+                    historyBtn?.classList.toggle('orders-view-btn--active', userOrdersView === 'sent');
+                }
+            };
+
+            if (newBtn && historyBtn) {
+                newBtn?.addEventListener('click', () => {
+                    if (isAdmin) adminOrdersView = 'new';
+                    else userOrdersView = 'pending';
+                    syncViewButtons();
+                    renderOrders(allOrders);
+                });
+
+                historyBtn?.addEventListener('click', () => {
+                    if (isAdmin) adminOrdersView = 'history';
+                    else userOrdersView = 'sent';
+                    syncViewButtons();
+                    renderOrders(allOrders);
+                });
+            }
+            syncViewButtons();
+            loadOrders();
+        }
+    </script>
+</body>
+</html>
+

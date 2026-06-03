@@ -1,0 +1,97 @@
+{
+ "info": {
+  "_postman_id": "kursova-api-collection-2025-01",
+  "name": "Kursova API v1",
+  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+ },
+ "item": [
+  {
+   "name": "Create User",
+   "request": {
+    "method": "POST",
+    "header": [
+     {"key":"Content-Type","value":"application/json"}
+    ],
+    "body": {"mode": "raw", "raw": "{\n  \"id\": 0,\n  \"email\": \"test1@example.com\",\n  \"password\": \"123456\",\n  \"role\": \"USER\"\n}"},
+    "url": {"raw":"http://localhost:8080/users","protocol":"http","host":["localhost"],"port":"8080","path":["users"]}
+   }
+  },
+  {
+   "name": "Get Users",
+   "request": {
+    "method": "GET",
+    "url": {"raw":"http://localhost:8080/users","protocol":"http","host":["localhost"],"port":"8080","path":["users"]}
+   }
+  },
+  {
+   "name": "Update User",
+   "request": {
+    "method": "PUT",
+    "header": [
+     {"key":"Content-Type","value":"application/json"}
+    ],
+    "body": {"mode": "raw", "raw": "{\n  \"id\": 1,\n  \"email\": \"test1@example.com\",\n  \"password\": \"newpassword\",\n  \"role\": \"ADMIN\"\n}"},
+    "url": {"raw":"http://localhost:8080/users/1","protocol":"http","host":["localhost"],"port":"8080","path":["users","1"]}
+   }
+  },
+  {
+   "name": "Delete User",
+   "request": {
+    "method": "DELETE",
+    "url": {"raw":"http://localhost:8080/users/1","protocol":"http","host":["localhost"],"port":"8080","path":["users","1"]}
+   }
+  },
+  {
+   "name": "Create Product",
+   "request": {
+    "method": "POST",
+    "header": [
+     {"key":"Content-Type","value":"application/json"},
+     {"key":"Authorization","value":"Bearer <ADMIN_TOKEN>"}
+    ],
+    "body": {"mode": "raw", "raw": "{\n  \"id\": 0,\n  \"name\": \"iPhone 15\",\n  \"price\": 49999,\n  \"categoryId\": 1\n}"},
+    "url": {"raw":"http://localhost:8080/products","protocol":"http","host":["localhost"],"port":"8080","path":["products"]}
+   }
+  },
+  {
+   "name": "Get Products",
+   "request": {
+    "method": "GET",
+    "url": {"raw":"http://localhost:8080/products?minPrice=1000&maxPrice=100000&sortBy=price&sortOrder=desc&offset=0&limit=10","protocol":"http","host":["localhost"],"port":"8080","path":["products"],"query":[{"key":"minPrice","value":"1000"},{"key":"maxPrice","value":"100000"},{"key":"sortBy","value":"price"},{"key":"sortOrder","value":"desc"},{"key":"offset","value":"0"},{"key":"limit","value":"10"}]}
+   }
+  },
+  {
+   "name": "Create Review",
+   "request": {
+    "method": "POST",
+    "header": [
+     {"key":"Content-Type","value":"application/json"},
+     {"key":"Authorization","value":"Bearer <USER_TOKEN>"}
+    ],
+    "body": {"mode": "raw", "raw": "{\n  \"id\": 0,\n  \"userId\": 2,\n  \"productId\": 1,\n  \"rating\": 5,\n  \"comment\": \"Все супер!\"\n}"},
+    "url": {"raw":"http://localhost:8080/reviews","protocol":"http","host":["localhost"],"port":"8080","path":["reviews"]}
+   }
+  },
+  {
+   "name": "Bad Email Error",
+   "request": {
+    "method": "POST",
+    "header": [
+     {"key":"Content-Type","value":"application/json"}
+    ],
+    "body": {"mode": "raw", "raw": "{\n  \"id\": 0,\n  \"email\": \"notEmail\",\n  \"password\": \"123456\",\n  \"role\": \"USER\"\n}"},
+    "url": {"raw":"http://localhost:8080/users","protocol":"http","host":["localhost"],"port":"8080","path":["users"]}
+   },
+   "response": [
+    {
+     "code": 400,
+     "name": "Bad Request",
+     "body": "{\n  \"status\": 400,\n  \"error\": \"Bad Request\",\n  \"message\": \"Invalid email\"\n}",
+     "header": [
+      {"key":"Content-Type","value":"application/json"}
+     ]
+    }
+   ]
+  }
+ ]
+}

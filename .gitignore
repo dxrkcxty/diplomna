@@ -1,0 +1,15 @@
+# IDE and local workspace files
+.idea/
+*.iml
+
+# Build output
+target/
+out/
+*.class
+
+# Local/private configuration
+src/main/resources/database.properties
+
+# OS files
+.DS_Store
+Thumbs.db

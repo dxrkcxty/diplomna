@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Знижки</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Знижки</h1>
+                <div class="topbar__actions"></div>
+            </div>
+            <div class="page">
+                <div class="discounts-container" style="max-width:none; padding:0; margin:0;">
+                    <div class="discounts-header">
+                        <h2>🔥 Акції тижня</h2>
+                        <p>Товари зі знижками в StyleHub</p>
+                    </div>
+                    <div id="discountsContainer" class="products-grid" style="padding:0;"></div>
+                    <div id="pagination" class="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Увійти</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Пароль" required>
+                <button type="submit" class="btn">Увійти</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Реєстрація</h2>
+            <form id="registerForm">
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Пароль" required>
+                <button type="submit" class="btn">Зареєструватися</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        class DiscountManager {
+            constructor() {
+                this.products = [];
+                this.currentPage = 1;
+                this.productsPerPage = 12;
+                this.init();
+            }
+
+            async init() {
+                await this.loadDiscounts();
+            }
+
+            async loadDiscounts() {
+                try {
+                    const response = await fetch('/api/products?discountOnly=true');
+                    if (response.ok) {
+                        this.products = await response.json();
+                        this.currentPage = 1;
+                        this.renderDiscounts();
+                    } else {
+                        this.showError('Помилка завантаження товарів зі знижками');
+                    }
+                } catch (error) {
+                    console.error('Помилка завантаження знижок:', error);
+                    this.showError('Помилка з\'єднання з сервером');
+                }
+            }
+
+            getProductsForPage(products) {
+                const start = (this.currentPage - 1) * this.productsPerPage;
+                const end = start + this.productsPerPage;
+                return products.slice(start, end);
+            }
+
+            renderDiscounts() {
+                const container = document.getElementById('discountsContainer');
+                if (!container) return;
+
+                if (this.products.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                            <h2 style="font-size: 2rem; color: var(--text-dark); margin-bottom: 1rem; font-weight: 700;">Наразі немає товарів зі знижками</h2>
+                            <p style="color: var(--text-light); font-size: 1.1rem;">Скоро з'являться нові акції!</p>
+                        </div>
+                    `;
+                    document.getElementById('pagination').innerHTML = '';
+                    return;
+                }
+
+                const pageProducts = this.getProductsForPage(this.products);
+                container.innerHTML = '';
+                
+                pageProducts.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    
+                    const originalPrice = product.price || 0;
+                    const discountPercent = product.discountPercent || 0;
+                    const discountAmount = product.discountAmount || 0;
+                    let finalPrice = originalPrice;
+                    let discountText = '';
+                    
+                    if (discountPercent > 0) {
+                        finalPrice = originalPrice * (1 - discountPercent / 100);
+                        discountText = `-${discountPercent.toFixed(0)}%`;
+                    } else if (discountAmount > 0) {
+                        finalPrice = Math.max(0, originalPrice - discountAmount);
+                        discountText = `-${discountAmount.toFixed(0)} грн`;
+                    }
+                    
+                    const imageUrl = product.imageUrl || '/assets/images/placeholder.svg';
+                    const productName = product.name || 'Товар #' + product.id;
+                    const isAuthenticated = typeof authManager !== 'undefined' && authManager.isAuthenticated();
+                    const isAdmin = typeof authManager !== 'undefined' && authManager.isAdmin();
+                    const isFavorite = typeof cartManager !== 'undefined' && cartManager.isFavorite(product.id);
+                    
+                    card.innerHTML = `
+                        <div style="position: relative;">
+                            <img src="${this.escapeHtml(imageUrl)}" alt="${this.escapeHtml(productName)}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                            <div class="discount-badge">${discountText}</div>
+                        </div>
+                        <div class="product-info">
+                            <h3>${this.escapeHtml(productName)}</h3>
+                            ${product.type ? `<p><strong>Тип:</strong> ${this.escapeHtml(product.type)}</p>` : ''}
+                            ${product.size ? `<p><strong>Розмір:</strong> ${this.escapeHtml(product.size)}</p>` : ''}
+                            ${product.gender ? `<p><strong>Стать:</strong> ${this.escapeHtml(product.gender)}</p>` : ''}
+                            <p style="margin-top: 1rem;">
+                                <span class="original-price">${originalPrice.toFixed(2)} грн</span>
+                                <span class="discount-price" style="font-size: 1.5rem; font-weight: 700;">${finalPrice.toFixed(2)} грн</span>
+                            </p>
+                        </div>
+                        ${isAuthenticated && !isAdmin ? `
+                        <div class="product-actions">
+                            <button class="btn" onclick="discountManager.addToCart(${product.id})" style="flex: 1; margin: 0;">Додати в корзину</button>
+                            <button class="btn ${isFavorite ? 'btn-favorite' : ''}" onclick="discountManager.toggleFavorite(${product.id})" style="flex: 1; margin: 0;">
+                                ${isFavorite ? '❤️ В обраному' : '🤍 В обране'}
+                            </button>
+                        </div>
+                        ` : ''}
+                    `;
+                    container.appendChild(card);
+                });
+                
+                this.renderPagination();
+            }
+
+            renderPagination() {
+                const pagination = document.getElementById('pagination');
+                if (!pagination) return;
+
+                const totalPages = Math.ceil(this.products.length / this.productsPerPage);
+                if (totalPages <= 1) {
+                    pagination.innerHTML = '';
+                    return;
+                }
+
+                let html = '<div class="pagination-controls">';
+                
+                // Кнопка "Попередня"
+                if (this.currentPage > 1) {
+                    html += `<button class="pagination-btn" onclick="discountManager.goToPage(${this.currentPage - 1})">‹ Попередня</button>`;
+                } else {
+                    html += `<button class="pagination-btn" disabled>‹ Попередня</button>`;
+                }
+                
+                // Номери сторінок
+                const maxVisible = 5;
+                let startPage = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+                
+                if (endPage - startPage < maxVisible - 1) {
+                    startPage = Math.max(1, endPage - maxVisible + 1);
+                }
+                
+                if (startPage > 1) {
+                    html += `<button class="pagination-btn" onclick="discountManager.goToPage(1)">1</button>`;
+                    if (startPage > 2) {
+                        html += `<span class="pagination-ellipsis">...</span>`;
+                    }
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    if (i === this.currentPage) {
+                        html += `<button class="pagination-btn active">${i}</button>`;
+                    } else {
+                        html += `<button class="pagination-btn" onclick="discountManager.goToPage(${i})">${i}</button>`;
+                    }
+                }
+                
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        html += `<span class="pagination-ellipsis">...</span>`;
+                    }
+                    html += `<button class="pagination-btn" onclick="discountManager.goToPage(${totalPages})">${totalPages}</button>`;
+                }
+                
+                // Кнопка "Наступна"
+                if (this.currentPage < totalPages) {
+                    html += `<button class="pagination-btn" onclick="discountManager.goToPage(${this.currentPage + 1})">Наступна ›</button>`;
+                } else {
+                    html += `<button class="pagination-btn" disabled>Наступна ›</button>`;
+                }
+                
+                html += '</div>';
+                pagination.innerHTML = html;
+            }
+
+            goToPage(page) {
+                const totalPages = Math.ceil(this.products.length / this.productsPerPage);
+                if (page >= 1 && page <= totalPages) {
+                    this.currentPage = page;
+                    this.renderDiscounts();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            async addToCart(productId) {
+                if (typeof cartManager === 'undefined') {
+                    alert('Помилка: CartManager не ініціалізовано');
+                    return;
+                }
+                try {
+                    const response = await fetch('/api/products/' + productId);
+                    if (response.ok) {
+                        const product = await response.json();
+                        cartManager.addToCart(product);
+                        if (cartManager.isFavorite(productId)) {
+                            cartManager.removeFromFavorites(productId);
+                        }
+                        alert('Товар додано в корзину!');
+                        this.renderDiscounts(); // Оновлюємо відображення
+                    } else {
+                        alert('Помилка завантаження товару');
+                    }
+                } catch (error) {
+                    console.error('Помилка додавання в корзину:', error);
+                    alert('Помилка з\'єднання з сервером');
+                }
+            }
+
+            toggleFavorite(productId) {
+                if (typeof cartManager === 'undefined') {
+                    alert('Помилка: CartManager не ініціалізовано');
+                    return;
+                }
+                fetch('/api/products/' + productId)
+                    .then(res => res.json())
+                    .then(product => {
+                        if (cartManager.isFavorite(productId)) {
+                            cartManager.removeFromFavorites(productId);
+                        } else {
+                            cartManager.addToFavorites(product);
+                        }
+                        this.renderDiscounts(); // Оновлюємо відображення
+                    })
+                    .catch(err => {
+                        console.error('Помилка додавання в обране:', err);
+                        alert('Помилка з\'єднання з сервером');
+                    });
+            }
+
+            showError(message) {
+                const container = document.getElementById('discountsContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-light);">
+                            <h2>${message}</h2>
+                        </div>
+                    `;
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        let discountManager;
+        
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // Ініціалізація
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                discountManager = new DiscountManager();
+                authManager.updateUI();
+                    if (typeof cartManager !== 'undefined' && !(authManager.isAdmin())) {
+                    cartManager.updateCartBadge();
+                    cartManager.updateFavoritesBadge();
+                }
+            });
+        } else {
+            discountManager = new DiscountManager();
+            authManager.updateUI();
+            if (typeof cartManager !== 'undefined' && !(authManager.isAdmin())) {
+                cartManager.updateCartBadge();
+                cartManager.updateFavoritesBadge();
+            }
+        }
+    </script>
+</body>
+</html>

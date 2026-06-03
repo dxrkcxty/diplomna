@@ -1,0 +1,474 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Керування знижками</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Керування знижками</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Знижки (адмін)</h1>
+                <div class="topbar__actions"></div>
+            </div>
+            <div class="page">
+                <main class="manage-discounts" style="padding:0;">
+                    <div class="products-grid" style="max-width: none; margin: 0; padding: 0;">
+                        <div style="grid-column: 1 / -1; margin-bottom: 1rem;">
+                            <h2 style="font-size: 1.75rem; color: var(--text-dark); margin-bottom: 0.5rem;">Керування знижками</h2>
+                            <p style="color: var(--text-light);">Виберіть товар та встановіть знижку (відсоток або фіксована сума)</p>
+                            <div style="margin-top:1rem; background: var(--bg-white); border:1px solid var(--border-color); border-radius: 14px; padding: 0.9rem; display:flex; gap:0.75rem; align-items:end; flex-wrap:wrap;">
+                                <div>
+                                    <label for="bulkDiscountType" style="display:block; font-weight:700; margin-bottom:0.25rem;">Тип масової знижки</label>
+                                    <select id="bulkDiscountType">
+                                        <option value="percent">Відсоток (%)</option>
+                                        <option value="amount">Фіксована сума (грн)</option>
+                                        <option value="none">Прибрати всі знижки</option>
+                                    </select>
+                                </div>
+                                <div id="bulkValueWrap">
+                                    <label id="bulkValueLabel" for="bulkDiscountValue" style="display:block; font-weight:700; margin-bottom:0.25rem;">Значення</label>
+                                    <input type="number" id="bulkDiscountValue" min="0" step="0.1" placeholder="Наприклад 15">
+                                </div>
+                                <button class="btn" id="applyAllDiscountsBtn" type="button">Застосувати до всіх товарів</button>
+                            </div>
+                        </div>
+                        <div id="productsContainer" class="products-grid" style="grid-column: 1 / -1; padding:0;"></div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <div id="discountModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDiscountModal()">&times;</span>
+            <h2>Встановити знижку</h2>
+            <form id="discountForm">
+                <input type="hidden" id="discountProductId">
+                <div class="form-group">
+                    <label>Назва товару:</label>
+                    <input type="text" id="discountProductName" readonly style="background: var(--bg-light);">
+                </div>
+                <div class="form-group">
+                    <label>Поточна ціна:</label>
+                    <input type="text" id="discountProductPrice" readonly style="background: var(--bg-light);">
+                </div>
+                <div class="form-group">
+                    <label>Тип знижки:</label>
+                    <select id="discountType" onchange="updateDiscountFields()">
+                        <option value="percent">Відсоток (%)</option>
+                        <option value="amount">Фіксована сума (грн)</option>
+                        <option value="none">Без знижки</option>
+                    </select>
+                </div>
+                <div class="form-group" id="percentGroup">
+                    <label>Відсоток знижки:</label>
+                    <input type="number" id="discountPercent" min="0" max="100" step="0.1" placeholder="Наприклад: 20">
+                    <small>Введіть відсоток знижки (0-100)</small>
+                </div>
+                <div class="form-group" id="amountGroup" style="display: none;">
+                    <label>Сума знижки (грн):</label>
+                    <input type="number" id="discountAmount" min="0" step="0.01" placeholder="Наприклад: 200">
+                    <small>Введіть фіксовану суму знижки</small>
+                </div>
+                <div class="form-group" id="previewGroup" style="display: none;">
+                    <label>Ціна зі знижкою:</label>
+                    <input type="text" id="finalPricePreview" readonly style="background: var(--bg-light); font-weight: 700; color: var(--danger-color);">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-danger" onclick="closeDiscountModal()">Скасувати</button>
+                    <button type="submit" class="btn">Зберегти знижку</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        let allProducts = [];
+
+        if (!authManager.isAuthenticated() || !authManager.isAdmin()) {
+            window.location.href = 'index.html?admin=1&login=1';
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products', {
+                    headers: {
+                        'Authorization': `Bearer ${authManager.token}`
+                    }
+                });
+                if (response.ok) {
+                    allProducts = await response.json();
+                    renderProducts();
+                }
+            } catch (error) {
+                console.error('Помилка завантаження товарів:', error);
+            }
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+            allProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                const originalPrice = product.price || 0;
+                const discountPercent = product.discountPercent || 0;
+                const discountAmount = product.discountAmount || 0;
+                let finalPrice = originalPrice;
+                let discountText = '';
+                
+                if (discountPercent > 0) {
+                    finalPrice = originalPrice * (1 - discountPercent / 100);
+                    discountText = `-${discountPercent.toFixed(0)}%`;
+                } else if (discountAmount > 0) {
+                    finalPrice = Math.max(0, originalPrice - discountAmount);
+                    discountText = `-${discountAmount.toFixed(0)} грн`;
+                }
+                
+                const imageUrl = product.imageUrl || '/assets/images/placeholder.svg';
+                
+                card.innerHTML = `
+                    <div style="position: relative;">
+                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                        ${discountText ? `<div class="discount-badge">${discountText}</div>` : ''}
+                    </div>
+                    <div class="product-info">
+                        <h3>${escapeHtml(product.name || 'Товар #' + product.id)}</h3>
+                        ${product.type ? `<p><strong>Тип:</strong> ${escapeHtml(product.type)}</p>` : ''}
+                        ${product.size ? `<p><strong>Розмір:</strong> ${escapeHtml(product.size)}</p>` : ''}
+                        ${product.gender ? `<p><strong>Стать:</strong> ${escapeHtml(product.gender)}</p>` : ''}
+                        <p style="margin-top: 1rem; margin-bottom: 1rem;">
+                            ${discountText ? `<span class="original-price">${originalPrice.toFixed(2)} грн</span>` : ''}
+                            <span style="font-size: 1.25rem; font-weight: 700; color: ${discountText ? 'var(--danger-color)' : 'var(--primary-color)'};">
+                                ${finalPrice.toFixed(2)} грн
+                            </span>
+                        </p>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn" onclick="openDiscountModal(${product.id})" style="width: 100%; margin: 0;">
+                            ${discountText ? 'Змінити знижку' : 'Встановити знижку'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openDiscountModal(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            document.getElementById('discountProductId').value = productId;
+            document.getElementById('discountProductName').value = product.name || 'Товар #' + productId;
+            document.getElementById('discountProductPrice').value = (product.price || 0).toFixed(2) + ' грн';
+
+            // Встановлюємо поточні значення знижки
+            if (product.discountPercent && product.discountPercent > 0) {
+                document.getElementById('discountType').value = 'percent';
+                document.getElementById('discountPercent').value = product.discountPercent;
+            } else if (product.discountAmount && product.discountAmount > 0) {
+                document.getElementById('discountType').value = 'amount';
+                document.getElementById('discountAmount').value = product.discountAmount;
+            } else {
+                document.getElementById('discountType').value = 'none';
+            }
+
+            updateDiscountFields();
+            document.getElementById('discountModal').style.display = 'block';
+        }
+
+        function closeDiscountModal() {
+            document.getElementById('discountModal').style.display = 'none';
+            document.getElementById('discountForm').reset();
+        }
+
+        function updateDiscountFields() {
+            const type = document.getElementById('discountType').value;
+            const percentGroup = document.getElementById('percentGroup');
+            const amountGroup = document.getElementById('amountGroup');
+            const previewGroup = document.getElementById('previewGroup');
+
+            if (type === 'percent') {
+                percentGroup.style.display = 'block';
+                amountGroup.style.display = 'none';
+                document.getElementById('discountAmount').value = '';
+            } else if (type === 'amount') {
+                percentGroup.style.display = 'none';
+                amountGroup.style.display = 'block';
+                document.getElementById('discountPercent').value = '';
+            } else {
+                percentGroup.style.display = 'none';
+                amountGroup.style.display = 'none';
+                document.getElementById('discountPercent').value = '';
+                document.getElementById('discountAmount').value = '';
+            }
+
+            calculatePreview();
+        }
+
+        function calculatePreview() {
+            const type = document.getElementById('discountType').value;
+            const price = parseFloat(document.getElementById('discountProductPrice').value.replace(' грн', '').replace(',', '.'));
+            const previewGroup = document.getElementById('previewGroup');
+            const finalPriceInput = document.getElementById('finalPricePreview');
+
+            if (type === 'none') {
+                previewGroup.style.display = 'none';
+                return;
+            }
+
+            let finalPrice = price;
+            if (type === 'percent') {
+                const percent = parseFloat(document.getElementById('discountPercent').value) || 0;
+                finalPrice = price * (1 - percent / 100);
+            } else if (type === 'amount') {
+                const amount = parseFloat(document.getElementById('discountAmount').value) || 0;
+                finalPrice = Math.max(0, price - amount);
+            }
+
+            finalPriceInput.value = finalPrice.toFixed(2) + ' грн';
+            previewGroup.style.display = 'block';
+        }
+
+        document.getElementById('discountPercent')?.addEventListener('input', calculatePreview);
+        document.getElementById('discountAmount')?.addEventListener('input', calculatePreview);
+
+        function buildProductFormData(product, type, value) {
+            const formData = new URLSearchParams();
+            formData.append('name', product.name || '');
+            formData.append('price', (product.price || 0).toString());
+            formData.append('categoryId', String(product.categoryId || 0));
+            formData.append('type', product.type || '');
+            formData.append('size', product.size || '');
+            formData.append('gender', product.gender || '');
+            formData.append('imageUrl', product.imageUrl || '');
+            if (type === 'percent') {
+                formData.append('discountPercent', String(value));
+                formData.append('discountAmount', '');
+            } else if (type === 'amount') {
+                formData.append('discountAmount', String(value));
+                formData.append('discountPercent', '');
+            } else {
+                formData.append('discountPercent', '');
+                formData.append('discountAmount', '');
+            }
+            return formData;
+        }
+
+        function syncBulkControls() {
+            const type = document.getElementById('bulkDiscountType').value;
+            const wrap = document.getElementById('bulkValueWrap');
+            const label = document.getElementById('bulkValueLabel');
+            const input = document.getElementById('bulkDiscountValue');
+            if (type === 'none') {
+                wrap.style.display = 'none';
+                input.value = '';
+            } else {
+                wrap.style.display = 'block';
+                if (type === 'percent') {
+                    label.textContent = 'Відсоток (%)';
+                    input.step = '0.1';
+                    input.max = '100';
+                    input.placeholder = 'Наприклад 15';
+                } else {
+                    label.textContent = 'Сума (грн)';
+                    input.step = '0.01';
+                    input.removeAttribute('max');
+                    input.placeholder = 'Наприклад 200';
+                }
+            }
+        }
+
+        async function applyDiscountToAllProducts() {
+            if (!Array.isArray(allProducts) || allProducts.length === 0) {
+                alert('Немає товарів для оновлення');
+                return;
+            }
+            const type = document.getElementById('bulkDiscountType').value;
+            const rawValue = parseFloat(document.getElementById('bulkDiscountValue').value || '0');
+            const value = Number.isFinite(rawValue) ? rawValue : 0;
+            if (type === 'percent' && (value < 0 || value > 100)) {
+                alert('Відсоток має бути від 0 до 100');
+                return;
+            }
+            if (type === 'amount' && value < 0) {
+                alert('Сума знижки не може бути від’ємною');
+                return;
+            }
+
+            const textType = type === 'percent' ? `${value}%` : (type === 'amount' ? `${value} грн` : 'прибрати всі');
+            if (!confirm(`Застосувати "${textType}" до ВСІХ товарів (${allProducts.length} шт)?`)) return;
+
+            const btn = document.getElementById('applyAllDiscountsBtn');
+            btn.disabled = true;
+            btn.textContent = 'Оновлюємо...';
+            let okCount = 0;
+            let failCount = 0;
+            try {
+                for (const product of allProducts) {
+                    const formData = buildProductFormData(product, type, value);
+                    const response = await fetch(`/api/products/${product.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Authorization': `Bearer ${authManager.token}`
+                        },
+                        body: formData
+                    });
+                    if (response.ok) okCount++;
+                    else failCount++;
+                }
+                await loadProducts();
+                alert(`Готово: оновлено ${okCount} товар(ів), помилок ${failCount}.`);
+            } catch (error) {
+                alert(`Помилка масового оновлення: ${error.message || error}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Застосувати до всіх товарів';
+            }
+        }
+
+        document.getElementById('discountForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productId = document.getElementById('discountProductId').value;
+            const type = document.getElementById('discountType').value;
+            const product = allProducts.find(p => p.id == productId);
+            
+            if (!product) return;
+
+            const formData = new URLSearchParams();
+            formData.append('name', product.name || '');
+            formData.append('price', (product.price || 0).toString());
+            formData.append('categoryId', String(product.categoryId || 0));
+            formData.append('type', product.type || '');
+            formData.append('size', product.size || '');
+            formData.append('gender', product.gender || '');
+            formData.append('imageUrl', product.imageUrl || '');
+
+            if (type === 'percent') {
+                const percent = parseFloat(document.getElementById('discountPercent').value) || 0;
+                formData.append('discountPercent', percent.toString());
+                formData.append('discountAmount', '');
+            } else if (type === 'amount') {
+                const amount = parseFloat(document.getElementById('discountAmount').value) || 0;
+                formData.append('discountAmount', amount.toString());
+                formData.append('discountPercent', '');
+            } else {
+                formData.append('discountPercent', '');
+                formData.append('discountAmount', '');
+            }
+
+            try {
+                const response = await fetch(`/api/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bearer ${authManager.token}`
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Знижку успішно оновлено!');
+                    closeDiscountModal();
+                    loadProducts();
+                } else {
+                    const error = await response.json();
+                    alert('Помилка оновлення знижки: ' + (error.message || 'Невідома помилка'));
+                }
+            } catch (error) {
+                console.error('Помилка оновлення знижки:', error);
+                alert('Помилка з\'єднання з сервером');
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '1';
+                menu.style.visibility = 'visible';
+                menu.style.transform = 'translateY(0)';
+            }
+        }
+
+        function hideUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '0';
+                menu.style.visibility = 'hidden';
+                menu.style.transform = 'translateY(-10px)';
+            }
+        }
+
+        // Перевіряємо авторизацію
+        if (!authManager.isAuthenticated() || !authManager.isAdmin()) {
+            window.location.href = 'index.html';
+        } else {
+            authManager.updateUI();
+            document.getElementById('bulkDiscountType')?.addEventListener('change', syncBulkControls);
+            document.getElementById('applyAllDiscountsBtn')?.addEventListener('click', applyDiscountToAllProducts);
+            syncBulkControls();
+            loadProducts();
+        }
+    </script>
+</body>
+</html>
+

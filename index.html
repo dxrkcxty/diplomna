@@ -1,0 +1,339 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Головна</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div style="min-height: 100vh; background: #0b1220; position: relative; overflow: hidden;">
+        <div style="position:absolute; inset:0; background:url('assets/images/hero-bg.svg') center/cover no-repeat; opacity:0.35;"></div>
+        <div style="position:absolute; inset:0; background: linear-gradient(180deg, rgba(11,18,32,0.96) 0%, rgba(11,18,32,0.78) 40%, rgba(11,18,32,0.96) 100%);"></div>
+
+        <div style="position:relative; max-width: 1120px; margin: 0 auto; padding: 2.6rem 1.25rem 1.4rem;">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+                <div style="color:white; display:flex; flex-direction:column; gap:0.35rem;">
+                    <div style="font-weight:900; font-size:2.15rem; letter-spacing:0.25px;">StyleHub</div>
+                    <div style="opacity:0.94; font-size:1.16rem; max-width: 58ch; line-height:1.45;">
+                        Магазин футбольного одягу та екіпірування. Швидкий каталог, знижки та підтримка.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position:relative; max-width: 1120px; margin: 0 auto; padding: 1.8rem 1.25rem 1.3rem;">
+            <div style="background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.16); border-radius: 24px; padding: 1.9rem; box-shadow: 0 24px 70px rgba(0,0,0,0.42); backdrop-filter: blur(10px);">
+                <h1 style="margin:0 0 0.7rem; color:white; font-size:2.55rem; line-height:1.08;">Зайди в каталог без реєстрації</h1>
+                <p style="margin:0 0 1.35rem; color: rgba(255,255,255,0.86); font-size:1.14rem; max-width: 60ch;">
+                    Реєстрація потрібна для замовлень, відгуків та чату з підтримкою.
+                </p>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                    <a class="btn" href="products.html" style="text-decoration:none; font-size:1.02rem; padding:0.72rem 1.15rem;">Перейти в каталог</a>
+                    <button class="nav-btn" type="button" onclick="openLoginModal()">Увійти</button>
+                    <button class="nav-btn" type="button" onclick="openRegisterModal()">Реєстрація</button>
+                </div>
+                <div style="margin-top:1.2rem; display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:0.7rem;">
+                    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:0.75rem 0.85rem; color:white;">
+                        <div style="font-size:0.82rem; opacity:0.8;">Товарів у каталозі</div>
+                        <div style="font-size:1.32rem; font-weight:900; margin-top:0.1rem;"><span id="catalogCount">—</span></div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:0.75rem 0.85rem; color:white;">
+                        <div style="font-size:0.82rem; opacity:0.8;">Категорії</div>
+                        <div style="font-size:1.32rem; font-weight:900; margin-top:0.1rem;">Одяг • Взуття • Екіп</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:14px; padding:0.75rem 0.85rem; color:white;">
+                        <div style="font-size:0.82rem; opacity:0.8;">Бонусна система</div>
+                        <div style="font-size:1.32rem; font-weight:900; margin-top:0.1rem;">2–5% з колеса</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position:relative; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem 1.4rem;">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:0.8rem;">
+                <div style="padding:0.95rem; border-radius:14px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:white;">
+                    <div style="font-size:1rem; font-weight:800; margin-bottom:0.25rem;">Швидкий пошук</div>
+                    <div style="font-size:0.95rem; opacity:0.84;">Фільтруй товари за категоріями, ціною та типом.</div>
+                </div>
+                <div style="padding:0.95rem; border-radius:14px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:white;">
+                    <div style="font-size:1rem; font-weight:800; margin-bottom:0.25rem;">Відгуки</div>
+                    <div style="font-size:0.95rem; opacity:0.84;">Переглядай досвід інших і залишай власну думку.</div>
+                </div>
+                <div style="padding:0.95rem; border-radius:14px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:white;">
+                    <div style="font-size:1rem; font-weight:800; margin-bottom:0.25rem;">Зручне оформлення</div>
+                    <div style="font-size:0.95rem; opacity:0.84;">Доставка, оплата та історія замовлень в одному місці.</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="position:relative; max-width: 1120px; margin: 0 auto; padding: 0 1.25rem 2.25rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; color: rgba(255,255,255,0.78); font-size:1rem;">
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                    <a href="https://t.me/Lsyncable" target="_blank" rel="noopener noreferrer" style="color: rgba(255,255,255,0.88); text-decoration:none; border:1px solid rgba(255,255,255,0.2); padding:0.58rem 0.9rem; border-radius: 12px; background: rgba(255,255,255,0.07);">Telegram</a>
+                    <a href="https://www.instagram.com/seqodia_l/" target="_blank" rel="noopener noreferrer" style="color: rgba(255,255,255,0.88); text-decoration:none; border:1px solid rgba(255,255,255,0.2); padding:0.58rem 0.9rem; border-radius: 12px; background: rgba(255,255,255,0.07);">Instagram</a>
+                </div>
+                <div>Підтримка: напиши нам у Telegram</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Увійти</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <div style="position: relative;">
+                        <input type="email" id="loginEmail" required style="padding-right: 40px;">
+                        <button type="button" id="toggleLoginPassword" style="display: none;"></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль:</label>
+                    <div style="position: relative;">
+                        <input type="password" id="loginPassword" required style="padding-right: 40px;">
+                        <button type="button" id="toggleLoginPasswordBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666;">👁️</button>
+                    </div>
+                </div>
+                <div style="margin: -0.25rem 0 0.9rem; display:flex; justify-content:flex-end;">
+                    <button type="button" class="nav-btn" style="padding:0.45rem 0.7rem; font-size:0.9rem;" onclick="openForgotPasswordModal()">Забув пароль</button>
+                </div>
+                <button type="submit" class="btn">Увійти</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="forgotPasswordModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 520px;">
+            <span class="close" onclick="closeForgotPasswordModal()">&times;</span>
+            <h2>Відновлення пароля</h2>
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="forgotAccountEmail">Email акаунта (який відновлюєш):</label>
+                    <input type="email" id="forgotAccountEmail" required placeholder="old_account@mail.com">
+                </div>
+                <div class="form-group">
+                    <label for="forgotRecoveryEmail">Куди надіслати код:</label>
+                    <input type="email" id="forgotRecoveryEmail" required placeholder="my_real_email@gmail.com">
+                </div>
+                <button type="submit" class="btn">Надіслати код</button>
+            </form>
+            <div style="height: 1px; background: var(--border-color); margin: 1rem 0;"></div>
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label for="resetCode">Код з пошти:</label>
+                    <input type="text" id="resetCode" required placeholder="123456" maxlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="resetNewPassword">Новий пароль:</label>
+                    <input type="password" id="resetNewPassword" required placeholder="мінімум 6 символів">
+                </div>
+                <button type="submit" class="btn">Змінити пароль</button>
+            </form>
+            <div style="margin-top:0.75rem; color: var(--text-light); font-size:0.9rem;">
+                Якщо лист не прийшов — перевір “Спам”. Код діє 15 хвилин.
+            </div>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Реєстрація</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerFirstName">Ім'я:</label>
+                    <input type="text" id="registerFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerLastName">Прізвище:</label>
+                    <input type="text" id="registerLastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль:</label>
+                    <div style="position: relative;">
+                        <input type="password" id="registerPassword" required style="padding-right: 40px;">
+                        <button type="button" id="toggleRegisterPasswordBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666;">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Зареєструватися</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+        function openForgotPasswordModal() {
+            closeLoginModal();
+            document.getElementById('forgotPasswordModal').style.display = 'block';
+        }
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'none';
+        }
+
+        document.getElementById('toggleLoginPasswordBtn').addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+
+
+        document.getElementById('toggleRegisterPasswordBtn').addEventListener('click', function() {
+            const passwordInput = document.getElementById('registerPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+
+        (function handleAdminLoginRedirect() {
+            const params = new URLSearchParams(window.location.search || '');
+            const needAdmin = params.get('admin') === '1';
+            const openLogin = params.get('login') === '1';
+            if (needAdmin && openLogin) {
+                openLoginModal();
+                setTimeout(() => {
+                    alert('Ця сторінка доступна лише адміністратору. Увійдіть під адмін-акаунтом.');
+                }, 100);
+            }
+        })();
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const result = await authManager.login(email, password);
+            if (result.success) {
+                closeLoginModal();
+                alert('Успішний вхід!');
+
+                setTimeout(() => {
+                    window.location.href = 'products.html';
+                }, 500);
+            } else {
+                alert(result.message);
+            }
+        });
+
+        document.getElementById('forgotPasswordForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const accountEmail = String(document.getElementById('forgotAccountEmail')?.value || '').trim();
+            const recoveryEmail = String(document.getElementById('forgotRecoveryEmail')?.value || '').trim();
+            if (!accountEmail || !recoveryEmail) return;
+            try {
+                const res = await fetch('/api/users/password-reset/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `accountEmail=${encodeURIComponent(accountEmail)}&recoveryEmail=${encodeURIComponent(recoveryEmail)}`
+                });
+                if (res.ok) alert('Якщо email існує — код надіслано.');
+                else alert('Не вдалося надіслати код');
+            } catch (err) {
+                alert('Помилка з’єднання');
+            }
+        });
+
+        document.getElementById('resetPasswordForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = String(document.getElementById('forgotAccountEmail')?.value || '').trim();
+            const code = String(document.getElementById('resetCode')?.value || '').trim();
+            const newPassword = String(document.getElementById('resetNewPassword')?.value || '');
+            if (!email || !code || !newPassword) return;
+            try {
+                const res = await fetch('/api/users/password-reset/confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `accountEmail=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}&newPassword=${encodeURIComponent(newPassword)}`
+                });
+                if (res.ok) {
+                    alert('Пароль змінено. Можна увійти.');
+                    closeForgotPasswordModal();
+                    openLoginModal();
+                } else {
+                    const t = await res.text();
+                    alert(t || 'Не вдалося змінити пароль');
+                }
+            } catch (err) {
+                alert('Помилка з’єднання');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const firstName = (document.getElementById('registerFirstName')?.value || '').trim();
+            const lastName = (document.getElementById('registerLastName')?.value || '').trim();
+            
+            if (!email) {
+                alert('Будь ласка, введіть email');
+                return;
+            }
+            if (!password) {
+                alert('Будь ласка, введіть пароль');
+                return;
+            }
+            if (!firstName) {
+                alert("Будь ласка, введіть ім'я");
+                return;
+            }
+            if (!lastName) {
+                alert('Будь ласка, введіть прізвище');
+                return;
+            }
+            
+            const result = await authManager.register(email, password, 'USER');
+            if (result.success) {
+                closeRegisterModal();
+                alert('Реєстрація успішна! Ви увійшли в систему.');
+
+                setTimeout(() => {
+                    window.location.href = 'products.html';
+                }, 500);
+            } else {
+                alert(result.message);
+            }
+        });
+
+        (async function loadCatalogCount() {
+            const el = document.getElementById('catalogCount');
+            if (!el) return;
+            try {
+                const res = await fetch('/api/products');
+                if (!res.ok) return;
+                const products = await res.json();
+                if (Array.isArray(products)) {
+                    el.textContent = String(products.length);
+                }
+            } catch (e) {
+            }
+        })();
+    </script>
+</body>
+</html>

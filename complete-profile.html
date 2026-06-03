@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Завершити реєстрацію</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Профіль</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Завершити реєстрацію</h1>
+                <div class="topbar__actions"></div>
+            </div>
+
+            <div class="page">
+                <div style="max-width: 720px; margin: 0 auto; background: var(--bg-white); border:1px solid var(--border-color); border-radius: 16px; padding: 1.25rem; box-shadow: var(--shadow-md);">
+                    <div style="font-weight:900; font-size:1.15rem; margin-bottom:0.25rem;">Додайте ім'я та прізвище</div>
+                    <div style="color: var(--text-light); margin-bottom:1rem;">Це потрібно для оформлення замовлень, відгуків та чату.</div>
+
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="firstName">Ім'я</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Прізвище</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                        <div class="modal-buttons" style="margin-top: 1rem;">
+                            <a class="btn btn-danger" href="products.html" style="text-decoration:none;">Пізніше</a>
+                            <button class="btn" type="submit">Зберегти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        function openLoginModal(){ window.location.href = 'index.html'; }
+        function openRegisterModal(){ window.location.href = 'index.html'; }
+
+        async function initMe() {
+            if (!authManager.isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+            await authManager.refreshMe();
+            authManager.updateUI();
+            if (authManager.user) {
+                document.getElementById('firstName').value = authManager.user.firstName || '';
+                document.getElementById('lastName').value = authManager.user.lastName || '';
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const res = await fetch('/api/users/me', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...authManager.getAuthHeader() },
+                body: `firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
+            });
+            if (!res.ok) {
+                const text = await res.text();
+                alert(text);
+                return;
+            }
+            if (authManager.user) {
+                authManager.user.firstName = firstName;
+                authManager.user.lastName = lastName;
+                localStorage.setItem('user', JSON.stringify(authManager.user));
+                authManager.renderProfileBanner();
+            }
+            await authManager.refreshMe();
+            alert('Готово! Реєстрацію завершено.');
+            window.location.href = 'products.html';
+        });
+
+        window.addEventListener('DOMContentLoaded', initMe);
+    </script>
+</body>
+</html>
+

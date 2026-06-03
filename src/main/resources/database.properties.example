@@ -1,0 +1,8 @@
+db.url=jdbc:postgresql://localhost:5432/stylehub
+db.username=stylehub_user
+db.password=YOUR_PASSWORD
+db.driver=org.postgresql.Driver
+
+brevo.apiKey=
+brevo.fromEmail=your@email.com
+brevo.fromName=StyleHub

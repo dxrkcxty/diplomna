@@ -1,0 +1,379 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Каталог</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Каталог</h1>
+                <div class="topbar__actions">
+                    <button id="addProductBtn" class="btn" style="display:none;">Додати товар</button>
+                </div>
+            </div>
+
+            <div class="page">
+                <div class="controls" style="margin:0 0 1rem; padding: 1.25rem 1.5rem;">
+                    <div class="search-sort">
+                        <input type="text" id="searchInput" placeholder="Пошук товару...">
+                        <select id="groupFilterSelect">
+                            <option value="">Всі товари</option>
+                        </select>
+                        <select id="sortSelect">
+                            <option value="">Сортувати за...</option>
+                            <option value="name_asc">Назва (А-Я)</option>
+                            <option value="name_desc">Назва (Я-А)</option>
+                            <option value="price_asc">Ціна (за зростанням)</option>
+                            <option value="price_desc">Ціна (за спаданням)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="productsContainer" class="products-grid" style="padding:0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Додати новий товар</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId" name="productId">
+                <div class="form-group">
+                    <label for="productCategory">Категорія:</label>
+                    <select id="productCategory" name="productCategory" required>
+                        <option value="">Оберіть категорію</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productType">Тип екіпірування:</label>
+                    <select id="productType" name="productType" required>
+                        <option value="">Оберіть тип екіпірування</option>
+                        <option value="ігрова футболка">Ігрова футболка</option>
+                        <option value="ігрові шорти">Ігрові шорти</option>
+                        <option value="бутси">Бутси</option>
+                        <option value="щитки">Щитки</option>
+                        <option value="гетри">Гетри</option>
+                        <option value="термобілизна">Термобілизна</option>
+                        <option value="фіксатор">Фіксатор</option>
+                        <option value="воротарські рукавиці">Воротарські рукавиці</option>
+                        <option value="воротарський світшот">Воротарський світшот</option>
+                        <option value="воротарські штани">Воротарські штани</option>
+                        <option value="тренувальний костюм">Тренувальний костюм</option>
+                        <option value="куртка для тренувань">Куртка для тренувань</option>
+                        <option value="тренувальний інвентар">Тренувальний інвентар</option>
+                        <option value="пляшка">Пляшка</option>
+                        <option value="рюкзак">Рюкзак</option>
+                        <option value="сумка">Сумка</option>
+                        <option value="м'яч">Футбольний м'яч</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productName">Назва товару:</label>
+                    <input type="text" id="productName" name="productName" required>
+                </div>
+                <div class="form-group" id="productGenderGroup">
+                    <label for="productGender">Стать:</label>
+                    <select id="productGender" name="productGender">
+                        <option value="">Оберіть стать</option>
+                        <option value="чоловічий">Чоловічий</option>
+                        <option value="жіночий">Жіночий</option>
+                        <option value="унісекс">Унісекс</option>
+                    </select>
+                </div>
+                <div class="form-group" id="productSizeGroup">
+                    <label for="productSize">Розмір:</label>
+                    <select id="productSize" name="productSize"></select>
+                </div>
+                <div class="form-group">
+                    <label for="price">Ціна (грн):</label>
+                    <input type="number" id="price" name="price" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="imageUrl">Посилання на зображення:</label>
+                    <input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+                    <small style="color: #666; font-size: 0.9em;">Вставте посилання на зображення з інтернету</small>
+                </div>
+                <div id="imagePreview" style="margin-top: 10px; display: none;">
+                    <img id="previewImg" src="" alt="Попередній перегляд" style="max-width: 100%; max-height: 200px; border-radius: 5px;">
+                </div>
+                <button type="submit" class="btn">Зберегти</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>Підтвердження видалення</h2>
+            <p>Ви впевнені, що хочете видалити цей товар?</p>
+            <div class="modal-buttons">
+                <button id="confirmDelete" class="btn btn-danger">Видалити</button>
+                <button id="cancelDelete" class="btn">Скасувати</button>
+            </div>
+        </div>
+    </div>
+    <div id="productDetailModal" class="modal">
+        <div class="modal-content" style="max-width: 620px;">
+            <span class="close" id="closeDetailModal">&times;</span>
+            <h2 id="detailTitle">Товар</h2>
+            <div id="detailBody"></div>
+            <div id="detailPrice"></div>
+            <div class="form-group" id="detailSizeGroup">
+                <label for="detailSize">Розмір:</label>
+                <select id="detailSize"></select>
+            </div>
+            <div class="form-group" id="detailColorGroup">
+                <label for="detailColor">Колір:</label>
+                <select id="detailColor"></select>
+            </div>
+            <div class="form-group">
+                <label>Наявність:</label>
+                <div id="detailAvailability" style="font-weight: 700;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-danger" id="detailCloseBtn">Закрити</button>
+                <button type="button" class="btn" id="detailAddToCartBtn">Додати в кошик</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Увійти</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль:</label>
+                    <div style="position: relative;">
+                        <input type="password" id="loginPassword" required style="padding-right: 40px;">
+                        <button type="button" id="toggleLoginPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666;">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Увійти</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Реєстрація</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerFirstName">Ім'я:</label>
+                    <input type="text" id="registerFirstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerLastName">Прізвище:</label>
+                    <input type="text" id="registerLastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль:</label>
+                    <div style="position: relative;">
+                        <input type="password" id="registerPassword" required style="padding-right: 40px;">
+                        <button type="button" id="toggleRegisterPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; color: #666;">👁️</button>
+                    </div>
+                </div>
+                <input type="hidden" id="registerRole" value="USER">
+                <button type="submit" class="btn">Зареєструватися</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script src="script.js"></script>
+    <script>
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                if (!window.productManager) {
+                    window.productManager = new ProductManager();
+                }
+            });
+        } else {
+            if (!window.productManager) {
+                window.productManager = new ProductManager();
+            }
+        }
+    </script>
+    <script>
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        function showUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '1';
+                menu.style.visibility = 'visible';
+                menu.style.transform = 'translateY(0)';
+            }
+        }
+
+        function hideUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '0';
+                menu.style.visibility = 'hidden';
+                menu.style.transform = 'translateY(-10px)';
+            }
+        }
+
+        // Кнопка показу/приховування пароля для реєстрації
+        document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('registerPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+
+        // Кнопка показу/приховування пароля для логіну
+        document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginPassword');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                this.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                this.textContent = '👁️';
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const result = await authManager.login(email, password);
+            if (result.success) {
+                closeLoginModal();
+                // Оновлюємо UI після входу
+                authManager.updateUI();
+                if (typeof cartManager !== 'undefined') {
+                    cartManager.updateCartBadge();
+                    cartManager.updateFavoritesBadge();
+                }
+                // Перезавантажуємо сторінку для коректного відображення
+                window.location.reload();
+            } else {
+                alert(result.message);
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const roleSelect = document.getElementById('registerRole');
+            const role = roleSelect ? (roleSelect.value || 'USER') : 'USER';
+            const firstName = document.getElementById('registerFirstName')?.value?.trim();
+            const lastName = document.getElementById('registerLastName')?.value?.trim();
+            
+            // Перевірка на порожні поля
+            if (!firstName) {
+                alert("Будь ласка, введіть ім'я");
+                return;
+            }
+            if (!lastName) {
+                alert('Будь ласка, введіть прізвище');
+                return;
+            }
+            if (!email) {
+                alert('Будь ласка, введіть email');
+                return;
+            }
+            if (!password) {
+                alert('Будь ласка, введіть пароль');
+                return;
+            }
+            
+            const result = await authManager.register(email, password, role);
+            if (result.success) {
+                closeRegisterModal();
+                // Оновлюємо UI після реєстрації
+                authManager.updateUI();
+                if (typeof cartManager !== 'undefined') {
+                    cartManager.updateCartBadge();
+                    cartManager.updateFavoritesBadge();
+                }
+                // Перезавантажуємо сторінку для коректного відображення
+                window.location.reload();
+            } else {
+                alert(result.message);
+            }
+        });
+    </script>
+</body>
+</html> 

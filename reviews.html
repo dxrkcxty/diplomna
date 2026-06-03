@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Відгуки</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Відгуки</h1>
+                <div class="topbar__actions"></div>
+            </div>
+            <div class="page">
+                <div class="reviews-container" style="max-width:none; padding:0; margin:0;">
+                    <div class="reviews-header">
+                        <h2>Відгуки про магазин StyleHub</h2>
+                        <p>Поділіться думкою про екіпірування, сервіс та якість товарів</p>
+                    </div>
+
+                    <div id="reviewsList" class="reviews-list"></div>
+
+                    <div id="addReviewSection" class="add-review-section" style="display: none;">
+                        <h3>Залишити відгук</h3>
+                        <form id="reviewForm">
+                            <div class="form-group">
+                                <label style="display:block; margin-bottom:0.5rem;">Про що відгук?</label>
+                                <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+                                    <label style="display:inline-flex; align-items:center; gap:0.4rem; font-weight:800;">
+                                        <input type="radio" name="subjectType" value="SITE" checked>
+                                        Про сайт
+                                    </label>
+                                    <label style="display:inline-flex; align-items:center; gap:0.4rem; font-weight:800;">
+                                        <input type="radio" name="subjectType" value="PRODUCT">
+                                        Про товар
+                                    </label>
+                                    <select id="reviewProductSelect" style="min-width: 240px; display:none;">
+                                        <option value="">Оберіть товар…</option>
+                                    </select>
+                                </div>
+                                <small id="reviewSubjectHint" style="display:block; margin-top:0.35rem; color: var(--text-light);">
+                                    Відгук «про товар» доступний для товарів, які ви купували.
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <label>Ваша оцінка:</label>
+                                <div class="rating-stars rating-with-labels">
+    <span class="rating-label">5<br><small>Відмінно</small></span>
+    <input type="radio" id="star5" name="rating" value="5"><label for="star5">⭐</label>
+    <input type="radio" id="star4" name="rating" value="4"><label for="star4">⭐</label>
+    <input type="radio" id="star3" name="rating" value="3"><label for="star3">⭐</label>
+    <input type="radio" id="star2" name="rating" value="2"><label for="star2">⭐</label>
+    <input type="radio" id="star1" name="rating" value="1"><label for="star1">⭐</label>
+    <span class="rating-label">1<br><small>Погано</small></span>
+</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reviewComment">Коментар:</label>
+                        <textarea id="reviewComment" name="comment" rows="5" placeholder="Напишіть ваш відгук про сайт тут..." required></textarea>
+                    </div>
+                    <div class="review-form-buttons">
+                                <button type="submit" class="btn">Надіслати відгук</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Увійти</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Пароль" required>
+                <button type="submit" class="btn">Увійти</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>Реєстрація</h2>
+            <form id="registerForm">
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Пароль" required>
+                <button type="submit" class="btn">Зареєструватися</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="reviews.js"></script>
+    <script>
+function toggleUserMenu() {
+    const menu = document.getElementById('userMenu');
+    if (menu) {
+        if (menu.style.opacity === '1') {
+            menu.style.opacity = '0';
+            menu.style.visibility = 'hidden';
+            menu.style.transform = 'translateY(-10px)';
+        } else {
+            menu.style.opacity = '1';
+            menu.style.visibility = 'visible';
+            menu.style.transform = 'translateY(0)';
+        }
+    }
+}
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('userMenu');
+    const avatar = document.querySelector('.user-avatar');
+    if (menu && avatar && !menu.contains(e.target) && !avatar.contains(e.target)) {
+        menu.style.opacity = '0';
+        menu.style.visibility = 'hidden';
+        menu.style.transform = 'translateY(-10px)';
+    }
+});
+</script>
+</body>
+</html>
+

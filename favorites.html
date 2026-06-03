@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Обране</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="assets/images/favicon.svg" type="image/x-icon">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Обране</h1>
+                <div class="topbar__actions"></div>
+            </div>
+            <div class="page">
+                <div id="favoritesContainer" class="products-grid" style="padding:0;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        function renderFavorites() {
+            const container = document.getElementById('favoritesContainer');
+            if (!container) return;
+
+            const favorites = cartManager.favorites;
+            
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
+                        <h2 style="font-size: 2rem; color: var(--text-dark); margin-bottom: 1rem; font-weight: 700;">Ваше обране</h2>
+                        <p style="font-size: 1.5rem; color: var(--text-light); margin-bottom: 1rem; font-weight: 600;">порожнє</p>
+                        <p style="color: var(--text-light); margin-bottom: 2rem;">Додайте товари в обране з каталогу</p>
+                        <a href="products.html" class="btn" style="display: inline-block; width: auto; padding: 1rem 2rem;">Перейти до каталогу</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            favorites.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const displayPrice = product.price ? product.price.toFixed(2) : '0.00';
+                const imageUrl = product.imageUrl || '/assets/images/placeholder.svg';
+                const hasDiscount = product.originalPrice != null && Number(product.originalPrice) > Number(product.price);
+                
+                card.innerHTML = `
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                    <div class="product-info">
+                        <h3>${escapeHtml(product.name || 'Товар #' + product.id)}</h3>
+                        ${product.type ? `<p><strong>Тип:</strong> ${escapeHtml(product.type)}</p>` : ''}
+                        ${product.size ? `<p><strong>Розмір:</strong> ${escapeHtml(product.size)}</p>` : ''}
+                        ${product.gender ? `<p><strong>Стать:</strong> ${escapeHtml(product.gender)}</p>` : ''}
+                        <p style="font-size: 1.25rem; font-weight: 700; margin-top: 1rem;">
+                            <strong>Ціна:</strong>
+                            ${hasDiscount ? `<span style="text-decoration: line-through; color: var(--text-light); margin: 0 0.5rem;">${Number(product.originalPrice).toFixed(2)} грн</span>` : ''}
+                            <span style="color: ${hasDiscount ? 'var(--danger-color)' : 'var(--primary-color)'};">${displayPrice} грн</span>
+                        </p>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn" onclick="addToCartFromFavorites(${product.id})" style="flex: 1; margin: 0;">Додати в корзину</button>
+                        <button class="btn btn-favorite" onclick="removeFromFavorites(${product.id})" style="flex: 1; margin: 0;">Видалити</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function addToCartFromFavorites(productId) {
+            const product = cartManager.favorites.find(p => p.id === productId);
+            if (product) {
+                cartManager.addToCart(product);
+                // Видаляємо товар з обраного після додавання в корзину
+                cartManager.removeFromFavorites(productId);
+                renderFavorites(); // Оновлюємо відображення
+                alert('Товар додано в корзину та видалено з обраного!');
+            }
+        }
+
+        function removeFromFavorites(productId) {
+            cartManager.removeFromFavorites(productId);
+            renderFavorites();
+        }
+
+        function showUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '1';
+                menu.style.visibility = 'visible';
+                menu.style.transform = 'translateY(0)';
+            }
+        }
+
+        function hideUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '0';
+                menu.style.visibility = 'hidden';
+                menu.style.transform = 'translateY(-10px)';
+            }
+        }
+
+        // Перевіряємо авторизацію
+        if (!authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        } else {
+            authManager.updateUI();
+            cartManager.updateCartBadge();
+            cartManager.updateFavoritesBadge();
+            renderFavorites();
+        }
+    </script>
+</body>
+</html>

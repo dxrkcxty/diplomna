@@ -1,0 +1,439 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Бонуси</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .bonus-card {
+            background: var(--bg-white);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+        }
+        .wheel-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        @media (max-width: 920px) {
+            .wheel-wrap { grid-template-columns: 1fr; }
+        }
+        .wheel {
+            width: 420px;
+            height: 420px;
+            border-radius: 999px;
+            margin: 0 auto;
+            position: relative;
+            border: 10px solid rgba(22, 163, 74, 0.25);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.15);
+            background:
+                conic-gradient(
+                    rgba(250,204,21,0.92) 0deg 90deg,
+                    rgba(74,222,128,0.92) 90deg 180deg,
+                    rgba(59,130,246,0.65) 180deg 270deg,
+                    rgba(239,68,68,0.70) 270deg 360deg
+                );
+            transform: rotate(0deg);
+            transition: transform 1400ms cubic-bezier(.17,.84,.2,1);
+        }
+        .wheel::after {
+            content: "";
+            position: absolute;
+            inset: 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.8);
+            filter: blur(0.2px);
+        }
+        .wheel-labels {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .wheel-labels div {
+            position: absolute;
+            font-weight: 900;
+            color: rgba(15, 23, 42, 0.92);
+            font-size: 1.4rem;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.75);
+        }
+        .wheel-labels .l2 { transform: rotate(45deg) translateY(-160px); }
+        .wheel-labels .l3 { transform: rotate(135deg) translateY(-160px); }
+        .wheel-labels .l4 { transform: rotate(225deg) translateY(-160px); }
+        .wheel-labels .l5 { transform: rotate(315deg) translateY(-160px); }
+        .wheel-stage {
+            position: relative;
+            display: inline-block;
+            padding-top: 22px;
+        }
+        .wheel-rotor {
+            position: relative;
+            display: inline-block;
+            transform: rotate(0deg);
+            transition: transform 1400ms cubic-bezier(.17,.84,.2,1);
+        }
+        .pointer {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-bottom: 28px solid #ef4444;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+            z-index: 5;
+        }
+        .spin-btn {
+            width: 100%;
+            padding: 1.05rem 1rem;
+            font-size: 1.1rem;
+        }
+        .bonus-kpi {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .kpi {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 0.85rem 1rem;
+        }
+        .kpi__label { color: var(--text-light); font-weight: 700; font-size: 0.95rem; }
+        .kpi__value { font-weight: 950; font-size: 1.25rem; color: var(--text-dark); margin-top: 0.15rem; }
+        .orders-list {
+            margin: 0.75rem 0 1rem;
+            max-height: 260px;
+            overflow: auto;
+            display: grid;
+            gap: 0.6rem;
+            padding-right: 0.2rem;
+        }
+        .bonus-order {
+            border: 1px solid var(--border-color);
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 0.65rem 0.75rem;
+            cursor: pointer;
+        }
+        .bonus-order--active {
+            border-color: rgba(22,163,74,0.65);
+            box-shadow: inset 0 0 0 1px rgba(22,163,74,0.25);
+        }
+        .bonus-order__title {
+            font-weight: 900;
+        }
+        .bonus-order__meta {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link side-link--active" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" id="cartBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Бонуси</h1>
+                <div class="topbar__actions"></div>
+            </div>
+            <div class="page">
+                <div class="wheel-wrap">
+                    <div class="bonus-card">
+                        <div style="font-weight:950; font-size:1.6rem; margin-bottom:0.5rem;">Колесо бонусів</div>
+                        <div style="color: var(--text-light); margin-bottom: 1rem; font-size: 1.02rem;">
+                            1 підтверджене замовлення = 1 прокрутка. Прокрутка доступна тільки після того, як адмін підтвердить замовлення статусом <strong>«Відправлено»</strong>.
+                        </div>
+                        <div style="font-weight:800;">Обери підтверджене замовлення:</div>
+                        <div id="eligibleOrders" class="orders-list"></div>
+                        <button class="btn spin-btn" id="spinBtn">Крутити колесо</button>
+                        <div id="spinNotice" style="margin-top:0.75rem; color: var(--text-light); font-size:0.92rem;"></div>
+                        <div class="bonus-kpi">
+                            <div class="kpi">
+                                <div class="kpi__label">Поточний %</div>
+                                <div class="kpi__value" id="currentRate">—</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi__label">Баланс бонусів</div>
+                                <div class="kpi__value"><span id="currentBalance">0.00</span> грн</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi__label">Доступно прокруток</div>
+                                <div class="kpi__value" id="spinCredits">0</div>
+                            </div>
+                            <div class="kpi">
+                                <div class="kpi__label">Як працює знижка</div>
+                                <div class="kpi__value" style="font-size:1.05rem;">Списання в кошику</div>
+                            </div>
+                        </div>
+                        <div id="lastOrderInfo" style="margin-top:0.85rem; color: var(--text-light); font-size:0.9rem;">
+                        </div>
+                    </div>
+
+                    <div class="bonus-card" style="text-align:center;">
+                        <div class="wheel-stage">
+                            <div class="pointer"></div>
+                            <div class="wheel-rotor" id="wheelRotor">
+                                <div class="wheel" id="wheel"></div>
+                                <div class="wheel-labels">
+                                    <div class="l2">2%</div>
+                                    <div class="l3">3%</div>
+                                    <div class="l4">4%</div>
+                                    <div class="l5">5%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:1rem; color: var(--text-light); font-size:0.95rem;">
+                            Бонуси можна використати в кошику як додаткову знижку.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        let bonusOrders = [];
+        let selectedOrderId = null;
+        let wheelRotation = 0;
+
+        function rotationForRate(rate) {
+            const sectorCenter = (Number(rate) - 2) * 90 + 45;
+            const jitter = Math.floor(Math.random() * 30) - 15;
+            const turns = 5 + Math.floor(Math.random() * 3);
+            wheelRotation += turns * 360 + (360 - sectorCenter) + jitter;
+            return wheelRotation;
+        }
+
+        function updateLabels() {
+            const rateEl = document.getElementById('currentRate');
+            const balEl = document.getElementById('currentBalance');
+            const spinsEl = document.getElementById('spinCredits');
+            const btn = document.getElementById('spinBtn');
+            const notice = document.getElementById('spinNotice');
+            const rate = (typeof authManager.user?.bonusRate === 'number') ? authManager.user.bonusRate : null;
+            const bal = Number(authManager.user?.bonusBalance || 0);
+            const spins = bonusOrders.filter(o => o.canSpin).length;
+            rateEl.textContent = rate === null ? 'крути колесо' : `${rate}%`;
+            balEl.textContent = (isFinite(bal) ? bal : 0).toFixed(2);
+            if (spinsEl) spinsEl.textContent = String(Math.max(0, spins));
+            if (btn) btn.disabled = !(selectedOrderId && spins > 0);
+            if (notice) {
+                notice.textContent = spins <= 0
+                    ? 'Прокрутка з’явиться після підтвердження замовлення адміністратором (статус «Відправлено»).'
+                    : (!selectedOrderId ? 'Обери замовлення зі списку вище.' : `Для замовлення #${selectedOrderId} доступна прокрутка.`);
+            }
+        }
+
+        async function spin() {
+            const btn = document.getElementById('spinBtn');
+            const notice = document.getElementById('spinNotice');
+            if (notice) notice.textContent = '';
+            if (!selectedOrderId || !Number.isFinite(Number(selectedOrderId)) || Number(selectedOrderId) <= 0) {
+                if (notice) notice.textContent = 'Спочатку обери замовлення зі списку.';
+                return;
+            }
+            const spunOrderId = Number(selectedOrderId);
+            btn.disabled = true;
+            btn.textContent = 'Крутимо...';
+            try {
+                const res = await fetch(`/api/orders/${spunOrderId}/spin-bonus`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authManager.token}` }
+                });
+                const txt = await res.text();
+                if (!res.ok) {
+                    if (res.status === 404) {
+                        const msg404 = 'Spin endpoint не знайдено. Перезапусти сервер, щоб підхопити останні зміни.';
+                        if (notice) notice.textContent = msg404;
+                        alert(msg404);
+                        return;
+                    }
+                    let msg = txt;
+                    try { msg = (JSON.parse(txt).message || msg); } catch (e) {}
+                    if (notice) notice.textContent = msg;
+                    alert(msg);
+                    return;
+                }
+                const data = JSON.parse(txt);
+                const rate = Number(data.bonusRate);
+                const wheelRotor = document.getElementById('wheelRotor');
+                wheelRotor.style.transform = `rotate(${rotationForRate(rate)}deg)`;
+
+                await authManager.refreshMe();
+                await loadSummary();
+                updateLabels();
+                alert(`Замовлення #${spunOrderId}: бонус ${rate}% успішно нараховано`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Крутити колесо';
+            }
+        }
+
+        function renderEligibleOrders() {
+            const container = document.getElementById('eligibleOrders');
+            if (!container) return;
+            if (!bonusOrders.length) {
+                container.innerHTML = `<div class="bonus-order"><div class="bonus-order__title">Немає замовлень</div><div class="bonus-order__meta">Оформи перше замовлення.</div></div>`;
+                return;
+            }
+            container.innerHTML = bonusOrders.map(o => `
+                <div class="bonus-order ${selectedOrderId === o.id ? 'bonus-order--active' : ''}" data-order-id="${o.id}">
+                    <div class="bonus-order__title">#${o.id} • ${o.status || 'Невідомо'}</div>
+                    <div class="bonus-order__meta">Сума: ${o.total.toFixed(2)} грн • База: ${o.base.toFixed(2)} грн • ${o.canSpin ? 'Можна крутити' : 'Бонус вже нараховано / не підтверджено'}</div>
+                </div>
+            `).join('');
+            container.querySelectorAll('.bonus-order[data-order-id]').forEach(el => {
+                el.addEventListener('click', () => {
+                    selectedOrderId = Number(el.getAttribute('data-order-id'));
+                    renderEligibleOrders();
+                    updateLabels();
+                });
+            });
+        }
+
+        function getFinalPrice(product) {
+            const originalPrice = Number(product?.price || 0);
+            const discountPercent = Number(product?.discountPercent || 0);
+            const discountAmount = Number(product?.discountAmount || 0);
+            if (discountPercent > 0) {
+                return Number((originalPrice * (1 - discountPercent / 100)).toFixed(2));
+            }
+            if (discountAmount > 0) {
+                return Number(Math.max(0, originalPrice - discountAmount).toFixed(2));
+            }
+            return originalPrice;
+        }
+
+        async function loadSummary() {
+            const infoEl = document.getElementById('lastOrderInfo');
+            if (!infoEl) return;
+            try {
+                const ordersRes = await fetch('/api/orders', { headers: { 'Authorization': `Bearer ${authManager.token}` } });
+                if (!ordersRes.ok) {
+                    infoEl.textContent = 'Не вдалося завантажити замовлення.';
+                    return;
+                }
+                const orders = await ordersRes.json();
+                if (!Array.isArray(orders) || orders.length === 0) {
+                    infoEl.textContent = 'Щоб крутити колесо, спочатку оформіть замовлення і дочекайтесь підтвердження адміном (статус «Відправлено»).';
+                    bonusOrders = [];
+                    selectedOrderId = null;
+                    renderEligibleOrders();
+                    return;
+                }
+                const lastOrder = orders[orders.length - 1];
+                const confirmedCount = orders.filter(o => String(o.status || '').toLowerCase() === 'відправлено').length;
+                bonusOrders = orders.map(o => {
+                    const totalFromOrder = Number(o.totalAmount || 0);
+                    const totalFallback = Array.isArray(o.items)
+                        ? o.items.reduce((sum, it) => sum + Number(it.price || 0), 0)
+                        : 0;
+                    const totalLocal = totalFromOrder > 0 ? totalFromOrder : totalFallback;
+                    const usedLocal = Number(o.bonusUsed || 0);
+                    const baseLocal = Math.max(0, totalLocal - usedLocal);
+                    const canSpin = String(o.status || '').toLowerCase() === 'відправлено' &&
+                        !(Number(o.bonusEarned || 0) > 0 || typeof o.bonusRate === 'number');
+                    return { id: o.id, status: o.status, total: totalLocal, base: baseLocal, canSpin };
+                });
+                if (!selectedOrderId || !bonusOrders.some(o => o.id === selectedOrderId && o.canSpin)) {
+                    const firstAvailable = bonusOrders.find(o => o.canSpin);
+                    selectedOrderId = firstAvailable ? firstAvailable.id : null;
+                }
+                renderEligibleOrders();
+                const totalFromOrder = Number(lastOrder.totalAmount || 0);
+                const totalFallback = (lastOrder.productIds || []).reduce((sum, id) => {
+                    const p = map[id];
+                    return sum + (p ? getFinalPrice(p) : 0);
+                }, 0);
+                const total = totalFromOrder > 0 ? totalFromOrder : totalFallback;
+                if (total <= 0) {
+                    infoEl.textContent = `Останнє замовлення #${lastOrder.id}. Сума не визначена, але колесо доступне лише після реальних покупок.`;
+                    return;
+                }
+                const minBonus = (total * 0.02).toFixed(2);
+                const maxBonus = (total * 0.05).toFixed(2);
+                const rate = (typeof authManager.user?.bonusRate === 'number') ? authManager.user.bonusRate : null;
+                if (rate === null || rate <= 0) {
+                    infoEl.textContent = `Замовлень підтверджено: ${confirmedCount}. Останнє замовлення #${lastOrder.id} на суму ~${total.toFixed(2)} грн. Після прокрутки отримаєш від ${minBonus} до ${maxBonus} грн бонусів.`;
+                } else {
+                    const earned = (total * (rate / 100)).toFixed(2);
+                    infoEl.textContent = `Замовлень підтверджено: ${confirmedCount}. Останнє замовлення #${lastOrder.id} на суму ~${total.toFixed(2)} грн. З твоїм поточним % (${rate}%) це приблизно ${earned} грн бонусів.`;
+                }
+            } catch (e) {
+                infoEl.textContent = 'Помилка завантаження інформації про замовлення.';
+                bonusOrders = [];
+                selectedOrderId = null;
+                renderEligibleOrders();
+            }
+        }
+
+        if (!authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        } else {
+            authManager.updateUI();
+            cartManager?.updateCartBadge?.();
+            cartManager?.updateFavoritesBadge?.();
+            updateLabels();
+            loadSummary();
+            document.getElementById('spinBtn').addEventListener('click', spin);
+        }
+    </script>
+</body>
+</html>
+

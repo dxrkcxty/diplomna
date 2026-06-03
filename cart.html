@@ -1,0 +1,610 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleHub - Кошик</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .cart-summary {
+            background: var(--bg-white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            margin: 2rem auto;
+            max-width: 1400px;
+            border: 2px solid var(--border-color);
+        }
+        .cart-total {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border-color);
+            text-align: center;
+        }
+        .empty-cart {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .empty-cart h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .empty-cart p {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .empty-cart .subtitle {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .checkout-grid .form-group {
+            margin-bottom: 0;
+        }
+        .checkout-grid .form-group--full {
+            grid-column: 1 / -1;
+        }
+        @media (max-width: 760px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <strong>StyleHub</strong>
+                <span>Меню магазину</span>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="index.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🏠</span>Головна</span>
+                </a>
+                <a href="products.html" class="side-link">
+                    <span class="side-link__left"><span class="side-link__icon">🛍️</span>Каталог</span>
+                </a>
+                <a href="discounts.html" id="discountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🔥</span>Знижки</span>
+                </a>
+                <a href="reviews.html" id="reviewsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⭐</span>Відгуки</span>
+                </a>
+                <a href="bonuses.html" id="bonusesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">🎁</span>Бонуси</span>
+                </a>
+                <a href="favorites.html" id="favoritesBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">❤️</span>Обране</span>
+                    <span id="favoritesBadge" class="side-badge">0</span>
+                </a>
+                <a href="cart.html" class="side-link side-link--active">
+                    <span class="side-link__left"><span class="side-link__icon">🧺</span>Кошик</span>
+                    <span id="cartBadge" class="side-badge">0</span>
+                </a>
+                <a href="orders.html" id="ordersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">📦</span>Замовлення</span>
+                </a>
+                <a href="manage-discounts.html" id="manageDiscountsBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">⚙️</span>Знижки (адмін)</span>
+                </a>
+                <a href="users.html" id="usersBtn" class="side-link" style="display:none;">
+                    <span class="side-link__left"><span class="side-link__icon">👥</span>Користувачі</span>
+                </a>
+            </nav>
+            <div class="sidebar__footer">
+                <div id="userInfo" style="display:none;"></div>
+                <button id="loginBtn" class="nav-btn" onclick="openLoginModal()" style="width:100%; display:none;">Увійти</button>
+                <button id="registerBtn" class="nav-btn" onclick="openRegisterModal()" style="width:100%; display:none;">Реєстрація</button>
+            </div>
+        </aside>
+
+        <div class="content">
+            <div class="topbar">
+                <h1>Кошик</h1>
+                <div class="topbar__actions"></div>
+            </div>
+            <div class="page">
+                <div id="cartContainer" class="products-grid" style="padding:0;"></div>
+                <div class="cart-summary" id="cartSummary" style="display: none;">
+                    <div class="cart-total">Загальна сума: <span id="totalAmount">0.00</span> грн</div>
+                    <button class="btn" onclick="checkout()" style="margin-top: 1.5rem; width: 100%; padding: 1rem;">Оформити замовлення</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content" style="max-width: 760px;">
+            <span class="close" onclick="closeCheckoutModal()">&times;</span>
+            <h2>Оформлення замовлення</h2>
+            <form id="checkoutForm">
+                <div class="checkout-grid">
+                    <div class="form-group">
+                        <label for="checkoutFullName">ПІБ:</label>
+                        <input type="text" id="checkoutFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkoutPhone">Номер телефону:</label>
+                        <input type="text" id="checkoutPhone" placeholder="+380XXXXXXXXX" maxlength="13" required>
+                    </div>
+                    <div class="form-group form-group--full">
+                        <label for="checkoutAddress">Місце доставки:</label>
+                        <input type="text" id="checkoutAddress" placeholder="Місто, вулиця, будинок, квартира" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkoutCarrier">Поштова служба:</label>
+                        <select id="checkoutCarrier" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkoutBranch">Відділення:</label>
+                        <select id="checkoutBranch" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkoutPaymentMethod">Оплата:</label>
+                        <select id="checkoutPaymentMethod" required>
+                            <option value="online">Онлайн карткою</option>
+                            <option value="cod">Готівкою у відділенні</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkoutTotalPreview">До сплати:</label>
+                        <input type="text" id="checkoutTotalPreview" readonly style="background: var(--bg-light);">
+                    </div>
+                    <div class="form-group form-group--full" id="bonusBlock" style="display:none;">
+                        <div style="border:1px solid var(--border-color); background: var(--bg-light); border-radius: 16px; padding: 1rem;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap;">
+                                <div style="font-weight:900;">Бонуси</div>
+                                <div style="color: var(--text-light); font-weight: 650;">
+                                    Доступно: <span id="bonusBalanceLabel">0.00</span> грн • Ваш %: <span id="bonusRateLabel">—</span>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end; margin-top: 0.75rem;">
+                                <div style="flex:1; min-width: 220px;">
+                                    <label for="bonusUseAmount" style="display:block; margin-bottom:0.35rem;">Списати бонусів (грн):</label>
+                                    <input type="number" id="bonusUseAmount" min="0" step="0.01" value="0">
+                                </div>
+                                <button type="button" class="nav-btn" id="bonusUseMaxBtn" style="border-color: rgba(22,163,74,0.35);">Макс</button>
+                            </div>
+                            <div style="margin-top:0.6rem; color: var(--text-light); font-size:0.9rem;">
+                                Бонуси списуються як додаткова знижка. Після покупки нарахуються нові бонуси.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-buttons" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-danger" onclick="closeCheckoutModal()">Скасувати</button>
+                    <button type="submit" class="btn">Підтвердити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content" style="max-width: 560px;">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2>Оплата карткою</h2>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="cardNumber">Номер картки:</label>
+                    <input type="text" id="cardNumber" placeholder="1111 2222 3333 4444" maxlength="19" required>
+                </div>
+                <div class="form-group">
+                    <label for="cardHolder">Ім'я на картці:</label>
+                    <input type="text" id="cardHolder" placeholder="IVAN IVANENKO" required>
+                </div>
+                <div class="checkout-grid">
+                    <div class="form-group">
+                        <label for="cardExpiry">Термін дії:</label>
+                        <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCvv">CVV:</label>
+                        <input type="password" id="cardCvv" placeholder="123" maxlength="3" required>
+                    </div>
+                </div>
+                <div class="modal-buttons" style="margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-danger" onclick="closePaymentModal()">Скасувати</button>
+                    <button type="submit" class="btn">Оплатити та підтвердити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script>
+        const deliveryOptions = {
+            'Нова пошта': [
+                'Київ - Відділення №1, вул. Хрещатик, 22',
+                'Київ - Відділення №8, просп. Берестейський, 67',
+                'Львів - Відділення №3, вул. Городоцька, 120',
+                'Львів - Відділення №12, вул. Стрийська, 45',
+                'Харків - Відділення №5, вул. Сумська, 82',
+                'Одеса - Відділення №7, вул. Пантелеймонівська, 25',
+                'Дніпро - Відділення №10, просп. Дмитра Яворницького, 101'
+            ],
+            'Укрпошта': [
+                'Київ - Відділення 01001, вул. Хрещатик, 10',
+                'Львів - Відділення 79000, вул. Січових Стрільців, 3',
+                'Харків - Відділення 61002, вул. Ярослава Мудрого, 18',
+                'Одеса - Відділення 65001, вул. Дерибасівська, 12',
+                'Дніпро - Відділення 49000, просп. Поля, 2'
+            ],
+            'Meest Пошта': [
+                'Київ - Пункт №2451, вул. Антоновича, 14',
+                'Львів - Пункт №1123, вул. Кульпарківська, 59',
+                'Харків - Пункт №3310, вул. Науки, 21',
+                'Одеса - Пункт №4105, вул. Рішельєвська, 33'
+            ]
+        };
+        let pendingOrderPayload = null;
+        let cachedBonusBalance = 0;
+        let cachedBonusRate = null;
+
+        function renderCart() {
+            const container = document.getElementById('cartContainer');
+            const summary = document.getElementById('cartSummary');
+            if (!container) return;
+
+            const cart = cartManager.cart;
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-cart">
+                        <h2>Ваша корзина</h2>
+                        <p>порожня</p>
+                        <p class="subtitle">Додайте товари в корзину з каталогу</p>
+                        <a href="products.html" class="btn" style="display: inline-block; width: auto; padding: 1rem 2rem;">Перейти до каталогу</a>
+                    </div>
+                `;
+                if (summary) summary.style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = '';
+            cart.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                const displayPrice = item.price ? item.price.toFixed(2) : '0.00';
+                const quantity = item.quantity || 1;
+                const itemTotal = (item.price * quantity).toFixed(2);
+                const imageUrl = item.imageUrl || '/assets/images/placeholder.svg';
+                const hasDiscount = item.originalPrice != null && Number(item.originalPrice) > Number(item.price);
+                
+                card.innerHTML = `
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(item.name || 'Товар')}" class="product-image" onerror="this.onerror=null;this.src='/assets/images/placeholder.svg'">
+                    <div class="product-info">
+                        <h3>${escapeHtml(item.name || 'Товар #' + item.id)}</h3>
+                        ${item.type ? `<p><strong>Тип:</strong> ${escapeHtml(item.type)}</p>` : ''}
+                        ${item.size ? `<p><strong>Розмір:</strong> ${escapeHtml(item.size)}</p>` : ''}
+                        ${item.color ? `<p><strong>Колір:</strong> ${escapeHtml(item.color)}</p>` : ''}
+                        ${item.gender ? `<p><strong>Стать:</strong> ${escapeHtml(item.gender)}</p>` : ''}
+                        <p><strong>Ціна за одиницю:</strong> ${hasDiscount ? `<span style="text-decoration: line-through; color: var(--text-light); margin-right: 0.5rem;">${Number(item.originalPrice).toFixed(2)} грн</span>` : ''}<span style="font-weight: 700; color: ${hasDiscount ? 'var(--danger-color)' : 'var(--primary-color)'};">${displayPrice} грн</span></p>
+                        <p><strong>Кількість:</strong> ${quantity}</p>
+                        <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary-color); margin-top: 1rem;"><strong>Сума:</strong> ${itemTotal} грн</p>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn" onclick="changeQuantity(${item.id}, ${Math.max(1, quantity - 1)})" style="flex: 1; margin: 0;">-</button>
+                        <span style="flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.1rem;">${quantity}</span>
+                        <button class="btn" onclick="changeQuantity(${item.id}, ${quantity + 1})" style="flex: 1; margin: 0;">+</button>
+                        <button class="btn btn-danger" onclick="removeFromCart(${item.id})" style="flex: 1; margin: 0;">Видалити</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            if (summary) {
+                summary.style.display = 'block';
+                document.getElementById('totalAmount').textContent = cartManager.getCartTotal().toFixed(2);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function changeQuantity(productId, newQuantity) {
+            const item = cartManager.cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity = Math.max(1, newQuantity);
+                cartManager.saveCart();
+                renderCart();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cartManager.removeFromCart(productId);
+            renderCart();
+        }
+
+        function openCheckoutModal() {
+            const total = cartManager.getCartTotal();
+            const balance = Number(authManager.user?.bonusBalance || 0);
+            const rate = (typeof authManager.user?.bonusRate === 'number') ? authManager.user.bonusRate : null;
+            cachedBonusBalance = isFinite(balance) ? balance : 0;
+            cachedBonusRate = rate;
+
+            const bonusBlock = document.getElementById('bonusBlock');
+            const balanceLabel = document.getElementById('bonusBalanceLabel');
+            const rateLabel = document.getElementById('bonusRateLabel');
+            const useInput = document.getElementById('bonusUseAmount');
+            const maxBtn = document.getElementById('bonusUseMaxBtn');
+
+            if (bonusBlock && balanceLabel && rateLabel && useInput && maxBtn) {
+                bonusBlock.style.display = 'block';
+                balanceLabel.textContent = cachedBonusBalance.toFixed(2);
+                rateLabel.textContent = (cachedBonusRate === null) ? 'крути колесо' : `${cachedBonusRate}%`;
+                useInput.value = '0';
+                const recalc = () => {
+                    const raw = Number(useInput.value || 0);
+                    const use = Math.max(0, Math.min(raw, Math.min(total, cachedBonusBalance)));
+                    useInput.value = String(use.toFixed(2));
+                    document.getElementById('checkoutTotalPreview').value = `${(total - use).toFixed(2)} грн`;
+                };
+                useInput.oninput = recalc;
+                maxBtn.onclick = () => {
+                    useInput.value = String(Math.min(total, cachedBonusBalance).toFixed(2));
+                    recalc();
+                };
+                recalc();
+            } else {
+                document.getElementById('checkoutTotalPreview').value = `${total.toFixed(2)} грн`;
+            }
+            populateCarrierOptions();
+            document.getElementById('checkoutModal').style.display = 'block';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        function openPaymentModal() {
+            document.getElementById('paymentModal').style.display = 'block';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function populateCarrierOptions() {
+            const carrierSelect = document.getElementById('checkoutCarrier');
+            carrierSelect.innerHTML = Object.keys(deliveryOptions).map((carrier, index) =>
+                `<option value="${escapeHtml(carrier)}" ${index === 0 ? 'selected' : ''}>${escapeHtml(carrier)}</option>`
+            ).join('');
+            updateBranchOptions();
+        }
+
+        function updateBranchOptions() {
+            const carrier = document.getElementById('checkoutCarrier').value;
+            const branchSelect = document.getElementById('checkoutBranch');
+            const branches = deliveryOptions[carrier] || [];
+            branchSelect.innerHTML = branches.map(branch =>
+                `<option value="${escapeHtml(branch)}">${escapeHtml(branch)}</option>`
+            ).join('');
+        }
+
+        function normalizePhone(raw) {
+            const digits = String(raw || '').replace(/\D/g, '');
+            if (digits.startsWith('380')) {
+                return `+${digits.slice(0, 12)}`;
+            }
+            if (digits.startsWith('0')) {
+                return `+380${digits.slice(1, 10)}`;
+            }
+            return `+380${digits.slice(0, 9)}`;
+        }
+
+        function formatCardNumberInput(value) {
+            const digits = String(value || '').replace(/\D/g, '').slice(0, 16);
+            return digits.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+        }
+
+        function formatExpiryInput(value) {
+            const digits = String(value || '').replace(/\D/g, '').slice(0, 4);
+            if (digits.length <= 2) return digits;
+            return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+        }
+
+        function isFutureOrCurrentExpiry(expiry) {
+            const match = String(expiry || '').match(/^(\d{2})\/(\d{2})$/);
+            if (!match) return false;
+            const month = Number(match[1]);
+            const year = Number(match[2]);
+            if (month < 1 || month > 12) return false;
+            const now = new Date();
+            const nowYear = now.getFullYear() % 100;
+            const nowMonth = now.getMonth() + 1;
+            if (year < nowYear) return false;
+            if (year === nowYear && month < nowMonth) return false;
+            return true;
+        }
+
+        function validateCheckoutForm() {
+            const phoneInput = document.getElementById('checkoutPhone');
+            phoneInput.value = normalizePhone(phoneInput.value);
+            if (!/^\+380\d{9}$/.test(phoneInput.value)) {
+                alert('Номер телефону має бути у форматі +380XXXXXXXXX');
+                return false;
+            }
+            return true;
+        }
+
+        function validatePaymentForm() {
+            const cardNumberInput = document.getElementById('cardNumber');
+            const cardDigits = cardNumberInput.value.replace(/\D/g, '');
+            if (cardDigits.length !== 16) {
+                alert('Номер картки має містити рівно 16 цифр');
+                return false;
+            }
+
+            const expiryInput = document.getElementById('cardExpiry');
+            if (!isFutureOrCurrentExpiry(expiryInput.value)) {
+                alert('Термін дії має бути у форматі MM/YY і не в минулому');
+                return false;
+            }
+
+            const cvvInput = document.getElementById('cardCvv');
+            if (!/^\d{3}$/.test(cvvInput.value)) {
+                alert('CVV має містити рівно 3 цифри');
+                return false;
+            }
+            return true;
+        }
+
+        async function submitOrder(payload) {
+            try {
+                const requestBody = JSON.stringify(payload);
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authManager.token}`
+                    },
+                    body: requestBody
+                });
+                const responseText = await response.text();
+
+                if (response.ok) {
+                    alert('Замовлення оформлено! Дякуємо за покупку!');
+                    closeCheckoutModal();
+                    closePaymentModal();
+                    cartManager.cart = [];
+                    cartManager.saveCart();
+                    cartManager.updateCartBadge();
+                    await authManager.refreshMe();
+                    renderCart();
+                } else {
+                    try {
+                        const error = JSON.parse(responseText);
+                        alert('Помилка оформлення замовлення: ' + (error.message || error.error || 'Невідома помилка'));
+                    } catch (e) {
+                        alert('Помилка оформлення замовлення: ' + responseText);
+                    }
+                }
+            } catch (error) {
+                console.error('Помилка при оформленні замовлення:', error);
+                alert('Помилка з\'єднання з сервером: ' + error.message);
+            }
+        }
+
+        function checkout() {
+            if (cartManager.cart.length === 0) {
+                alert('Корзина порожня');
+                return;
+            }
+            if (!authManager.ensureProfileComplete()) {
+                alert("Завершіть реєстрацію (ім'я та прізвище) перед оформленням замовлення.");
+                return;
+            }
+            openCheckoutModal();
+        }
+
+        function showUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '1';
+                menu.style.visibility = 'visible';
+                menu.style.transform = 'translateY(0)';
+            }
+        }
+
+        function hideUserMenu() {
+            const menu = document.getElementById('userMenu');
+            if (menu) {
+                menu.style.opacity = '0';
+                menu.style.visibility = 'hidden';
+                menu.style.transform = 'translateY(-10px)';
+            }
+        }
+
+        if (!authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        } else {
+            authManager.updateUI();
+            cartManager.updateFavoritesBadge();
+            document.getElementById('checkoutCarrier').addEventListener('change', updateBranchOptions);
+            document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!validateCheckoutForm()) {
+                    return;
+                }
+                const isOnline = document.getElementById('checkoutPaymentMethod').value === 'online';
+                const bonusUse = Number(document.getElementById('bonusUseAmount')?.value || 0);
+                const payload = {
+                    items: cartManager.cart.flatMap(item => {
+                        const q = Math.max(1, item.quantity || 1);
+                        return Array.from({ length: q }, () => ({
+                            productId: item.id,
+                            name: item.name || '',
+                            size: item.size || '',
+                            color: item.color || '',
+                            price: Number(item.price || 0)
+                        }));
+                    }),
+                    productIds: cartManager.cart.flatMap(item => {
+                        const q = Math.max(1, item.quantity || 1);
+                        return Array.from({ length: q }, () => item.id);
+                    }),
+                    fullName: document.getElementById('checkoutFullName').value.trim(),
+                    phone: document.getElementById('checkoutPhone').value.trim(),
+                    deliveryAddress: document.getElementById('checkoutAddress').value.trim(),
+                    deliveryCarrier: document.getElementById('checkoutCarrier').value,
+                    deliveryBranch: document.getElementById('checkoutBranch').value,
+                    paymentMethod: isOnline ? 'Онлайн карткою' : 'Готівкою у відділенні',
+                    paymentStatus: isOnline ? 'Оплачено' : 'Оплата при отриманні',
+                    bonusUsed: isFinite(bonusUse) ? bonusUse : 0
+                };
+                if (isOnline) {
+                    pendingOrderPayload = payload;
+                    openPaymentModal();
+                    return;
+                }
+                await submitOrder(payload);
+            });
+            document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!validatePaymentForm()) {
+                    return;
+                }
+                if (!pendingOrderPayload) {
+                    alert('Немає даних для оплати');
+                    return;
+                }
+                await submitOrder(pendingOrderPayload);
+                pendingOrderPayload = null;
+            });
+            document.getElementById('checkoutPhone').addEventListener('input', (e) => {
+                e.target.value = normalizePhone(e.target.value);
+            });
+            document.getElementById('cardNumber').addEventListener('input', (e) => {
+                e.target.value = formatCardNumberInput(e.target.value);
+            });
+            document.getElementById('cardExpiry').addEventListener('input', (e) => {
+                e.target.value = formatExpiryInput(e.target.value);
+            });
+            document.getElementById('cardCvv').addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+            });
+            renderCart();
+        }
+    </script>
+</body>
+</html>
