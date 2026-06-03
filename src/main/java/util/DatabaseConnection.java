@@ -24,7 +24,7 @@ public class DatabaseConnection {
                 String databaseUrl = System.getenv("DATABASE_URL");
 
                 if (databaseUrl != null && !databaseUrl.isBlank()) {
-                    applyRenderDatabaseUrl(props, databaseUrl);
+                    applyDatabaseUrl(props, databaseUrl);
                 } else {
                     try (InputStream inputStream = openProperties()) {
                         if (inputStream == null) {
@@ -52,16 +52,23 @@ public class DatabaseConnection {
         return connection;
     }
 
-    private static void applyRenderDatabaseUrl(Properties props, String databaseUrl) {
+    private static void applyDatabaseUrl(Properties props, String databaseUrl) {
+        if (databaseUrl.startsWith("jdbc:postgresql:")) {
+            props.setProperty("db.url", databaseUrl);
+            props.setProperty("db.username", firstPresent("DB_USERNAME", "PGUSER"));
+            props.setProperty("db.password", firstPresent("DB_PASSWORD", "PGPASSWORD"));
+            return;
+        }
+
         URI uri = URI.create(databaseUrl);
         String userInfo = uri.getUserInfo();
         String username = "";
         String password = "";
         if (userInfo != null) {
             String[] parts = userInfo.split(":", 2);
-            username = URLDecoder.decode(parts[0], StandardCharsets.UTF_8);
+            username = decodeUriPart(parts[0]);
             if (parts.length > 1) {
-                password = URLDecoder.decode(parts[1], StandardCharsets.UTF_8);
+                password = decodeUriPart(parts[1]);
             }
         }
 
@@ -70,10 +77,31 @@ public class DatabaseConnection {
             jdbcUrl += ":" + uri.getPort();
         }
         jdbcUrl += uri.getPath();
+        String query = uri.getQuery();
+        String sslMode = firstPresent("DB_SSLMODE", "PGSSLMODE");
+        if (query != null && !query.isBlank()) {
+            jdbcUrl += "?" + query;
+        } else if (!sslMode.isBlank()) {
+            jdbcUrl += "?sslmode=" + sslMode;
+        }
 
         props.setProperty("db.url", jdbcUrl);
         props.setProperty("db.username", username);
         props.setProperty("db.password", password);
+    }
+
+    private static String decodeUriPart(String value) {
+        return URLDecoder.decode(value.replace("+", "%2B"), StandardCharsets.UTF_8);
+    }
+
+    private static String firstPresent(String... names) {
+        for (String name : names) {
+            String value = System.getenv(name);
+            if (value != null && !value.isBlank()) {
+                return value;
+            }
+        }
+        return "";
     }
 
     private static InputStream openProperties() {

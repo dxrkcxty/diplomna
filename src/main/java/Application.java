@@ -45,16 +45,8 @@ public class Application {
     }
 
     private void start() throws Exception {
+        waitForDatabase();
         DatabaseInitializer.initialize();
-
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            System.out.println("Підключення до PostgreSQL успішне");
-        } catch (Exception e) {
-            System.out.println("КРИТИЧНА ПОМИЛКА: не вдалося підключитися до БД");
-            e.printStackTrace();
-            return;
-        }
-
 
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -164,6 +156,14 @@ public class Application {
         server.createContext("/api/products", new StaticFileFilter(staticHandler, productController)).getFilters().add(new CorsFilter());
         server.createContext("/api/orders", orderController).getFilters().add(new CorsFilter());
         server.createContext("/api/reviews", reviewController).getFilters().add(new CorsFilter());
+        server.createContext("/health", exchange -> {
+            byte[] response = "OK".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "text/plain; charset=UTF-8");
+            exchange.sendResponseHeaders(200, response.length);
+            try (java.io.OutputStream os = exchange.getResponseBody()) {
+                os.write(response);
+            }
+        });
 
         server.createContext("/", staticHandler);
 
@@ -171,6 +171,27 @@ public class Application {
 
         server.start();
         System.out.println("Server started on port " + port);
+    }
+
+    private void waitForDatabase() throws Exception {
+        int maxAttempts = Integer.parseInt(System.getenv().getOrDefault("DB_CONNECT_ATTEMPTS", "10"));
+        long delayMs = Long.parseLong(System.getenv().getOrDefault("DB_CONNECT_DELAY_MS", "3000"));
+
+        Exception lastError = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try (Connection connection = DatabaseConnection.getConnection()) {
+                System.out.println("Connected to PostgreSQL");
+                return;
+            } catch (Exception e) {
+                lastError = e;
+                System.err.println("Database connection attempt " + attempt + " of " + maxAttempts + " failed: " + e.getMessage());
+                if (attempt < maxAttempts) {
+                    Thread.sleep(delayMs);
+                }
+            }
+        }
+
+        throw new IllegalStateException("Could not connect to PostgreSQL after " + maxAttempts + " attempts", lastError);
     }
 
     private File resolveStaticRoot() {

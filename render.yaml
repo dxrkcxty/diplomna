@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: stylehub
+    env: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: PGSSLMODE
+        value: require

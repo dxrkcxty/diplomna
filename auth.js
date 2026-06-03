@@ -1,6 +1,4 @@
-const API_BASE_URL = window.location.hostname.endsWith('vercel.app')
-    ? 'https://diplomna-kpfv.onrender.com'
-    : '';
+const API_BASE_URL = (window.API_BASE_URL || '').replace(/\/$/, '');
 
 function apiUrl(path) {
     return `${API_BASE_URL}${path}`;
