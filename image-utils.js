@@ -5,20 +5,20 @@
         'placeholder.svg',
     ];
     const PRODUCT_IMAGE_MAP = [
-        { keys: ['рюкзак'], path: 'assets/images/products/backpack.svg' },
-        { keys: ['сумк'], path: 'assets/images/products/bag.svg' },
-        { keys: ['бутс', 'predator', 'mercurial', 'future'], path: 'assets/images/products/boots.svg' },
-        { keys: ['футболк', 'світшот'], path: 'assets/images/products/jersey.svg' },
-        { keys: ['шорт'], path: 'assets/images/products/shorts.svg' },
-        { keys: ['гетр'], path: 'assets/images/products/socks.svg' },
-        { keys: ['термобілизн', 'костюм'], path: 'assets/images/products/training-suit.svg' },
-        { keys: ['куртк'], path: 'assets/images/products/jacket.svg' },
-        { keys: ['рукавиц'], path: 'assets/images/products/gloves.svg' },
-        { keys: ['штани'], path: 'assets/images/products/pants.svg' },
-        { keys: ['щитк', 'фіксатор'], path: 'assets/images/products/protection.svg' },
-        { keys: ['пляшк'], path: 'assets/images/products/bottle.svg' },
-        { keys: ['м\'яч', 'м’яч', 'ball'], path: 'assets/images/products/ball.svg' },
-        { keys: ['інвентар', 'драбин', 'конус'], path: 'assets/images/products/training-gear.svg' },
+        { keys: ['\u0440\u044e\u043a\u0437\u0430\u043a'], path: 'https://cdn.blazimg.com/1800/product/1/0/100426101_b.jpg' },
+        { keys: ['\u0441\u0443\u043c\u043a'], path: 'https://cdn.blazimg.com/1800/product/u/h/uhlsport_100121701_mag4344169_1.jpg' },
+        { keys: ['\u0431\u0443\u0442\u0441', 'predator', 'mercurial', 'future'], path: 'https://cdn.blazimg.com/1800/product/p/1/p1ga243425.jpg' },
+        { keys: ['\u0444\u0443\u0442\u0431\u043e\u043b\u043a', '\u0441\u0432\u0456\u0442\u0448\u043e\u0442'], path: 'https://cdn.blazimg.com/1800/product/5/0/50520201.jpg' },
+        { keys: ['\u0448\u043e\u0440\u0442'], path: 'https://cdn.blazimg.com/1800/product/6/5/657249-06_0_puma__pum-657249-06__imagefront.jpg' },
+        { keys: ['\u0433\u0435\u0442\u0440'], path: 'https://cdn.blazimg.com/1800/product/p/r/precision_708mr_royal_1.jpg' },
+        { keys: ['\u0442\u0435\u0440\u043c\u043e\u0431\u0456\u043b\u0438\u0437\u043d', '\u043a\u043e\u0441\u0442\u044e\u043c'], path: 'https://cdn.blazimg.com/1800/product/9/3/9321_9221_802.jpg' },
+        { keys: ['\u043a\u0443\u0440\u0442\u043a'], path: 'https://cdn.blazimg.com/1800/product/u/n/under-armour_1387162-002_0_0.jpg' },
+        { keys: ['\u0440\u0443\u043a\u0430\u0432\u0438\u0446'], path: 'https://cdn.blazimg.com/1800/product/r/i/rinat_nkra1400_red-white_1.jpg' },
+        { keys: ['\u0448\u0442\u0430\u043d\u0438'], path: 'https://cdn.blazimg.com/1800/product/3/0/303jv30_005_goalkeeper_pant_01.jpg' },
+        { keys: ['\u0449\u0438\u0442\u043a', '\u0444\u0456\u043a\u0441\u0430\u0442\u043e\u0440'], path: 'https://cdn.blazimg.com/1800/product/u/h/uhlsport_100680901_0.jpg' },
+        { keys: ['\u043f\u043b\u044f\u0448\u043a'], path: 'https://cdn.blazimg.com/1800/product/n/i/nike_n1007643-088_black-black-malachite_1.jpg' },
+        { keys: ['\u043c\'\u044f\u0447', '\u043c\u2019\u044f\u0447', 'ball'], path: 'https://cdn.blazimg.com/1800/product/e/r/erima_7192403_0.jpg' },
+        { keys: ['\u0456\u043d\u0432\u0435\u043d\u0442\u0430\u0440', '\u0434\u0440\u0430\u0431\u0438\u043d', '\u043a\u043e\u043d\u0443\u0441'], path: 'https://cdn.blazimg.com/1800/product/p/r/precision_trl233e_charcoal-black-grey_1.jpg' },
     ];
 
     function localAssetUrl(path) {
@@ -86,7 +86,7 @@
     function productImageUrl(product) {
         const current = product?.imageUrl || '';
         if (isDefaultImageUrl(current)) {
-            return localAssetUrl(productImagePath(product));
+            return normalizeImageUrl(productImagePath(product));
         }
         return normalizeImageUrl(current);
     }

@@ -97,7 +97,7 @@
                 const hasDiscount = product.originalPrice != null && Number(product.originalPrice) > Number(product.price);
                 
                 card.innerHTML = `
-                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" onerror="handleImageError(this)">
+                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.name || 'Товар')}" class="product-image" referrerpolicy="no-referrer" onerror="handleImageError(this)">
                     <div class="product-info">
                         <h3>${escapeHtml(product.name || 'Товар #' + product.id)}</h3>
                         ${product.type ? `<p><strong>Тип:</strong> ${escapeHtml(product.type)}</p>` : ''}

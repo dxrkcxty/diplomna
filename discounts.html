@@ -178,7 +178,7 @@
                     
                     card.innerHTML = `
                         <div style="position: relative;">
-                            <img src="${this.escapeHtml(imageUrl)}" alt="${this.escapeHtml(productName)}" class="product-image" onerror="handleImageError(this)">
+                            <img src="${this.escapeHtml(imageUrl)}" alt="${this.escapeHtml(productName)}" class="product-image" referrerpolicy="no-referrer" onerror="handleImageError(this)">
                             <div class="discount-badge">${discountText}</div>
                         </div>
                         <div class="product-info">
