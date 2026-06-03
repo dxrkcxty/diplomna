@@ -55,7 +55,8 @@ public class Application {
         }
 
 
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
+        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         UserService userService = new UserService();
         ProductService productService = new ProductService();
@@ -168,8 +169,7 @@ public class Application {
         server.setExecutor(null);
 
         server.start();
-        System.out.println("Server started at http://localhost:8080");
-        System.out.println("Open http://localhost:8080 in your browser");
+        System.out.println("Server started on port " + port);
     }
 
     private File resolveStaticRoot() {

@@ -1,6 +1,9 @@
 package util;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,39 +21,69 @@ public class DatabaseConnection {
         if (connection == null || connection.isClosed()) {
             try {
                 Properties props = new Properties();
+                String databaseUrl = System.getenv("DATABASE_URL");
 
-                InputStream inputStream = DatabaseConnection.class
-                        .getClassLoader()
-                        .getResourceAsStream(PROPERTIES_FILE);
-
-                if (inputStream == null) {
-                    inputStream = tryOpenFromFilesystem();
+                if (databaseUrl != null && !databaseUrl.isBlank()) {
+                    applyRenderDatabaseUrl(props, databaseUrl);
+                } else {
+                    try (InputStream inputStream = openProperties()) {
+                        if (inputStream == null) {
+                            throw new RuntimeException("database.properties not found");
+                        }
+                        props.load(inputStream);
+                    }
                 }
-
-                if (inputStream == null) {
-                    throw new RuntimeException("Файл database.properties не знайдено у resources або файловій системі");
-                }
-
-                props.load(inputStream);
 
                 String url = props.getProperty("db.url");
                 String username = props.getProperty("db.username");
                 String password = props.getProperty("db.password");
 
                 if (url == null || username == null || password == null) {
-                    throw new RuntimeException(
-                            "Неповні дані у database.properties"
-                    );
+                    throw new RuntimeException("Incomplete database configuration");
                 }
 
                 connection = DriverManager.getConnection(url, username, password);
 
             } catch (Exception e) {
-                System.err.println("Помилка підключення до БД: " + e.getMessage());
-                throw new SQLException("Не вдалося підключитися до БД", e);
+                System.err.println("Database connection error: " + e.getMessage());
+                throw new SQLException("Could not connect to database", e);
             }
         }
         return connection;
+    }
+
+    private static void applyRenderDatabaseUrl(Properties props, String databaseUrl) {
+        URI uri = URI.create(databaseUrl);
+        String userInfo = uri.getUserInfo();
+        String username = "";
+        String password = "";
+        if (userInfo != null) {
+            String[] parts = userInfo.split(":", 2);
+            username = URLDecoder.decode(parts[0], StandardCharsets.UTF_8);
+            if (parts.length > 1) {
+                password = URLDecoder.decode(parts[1], StandardCharsets.UTF_8);
+            }
+        }
+
+        String jdbcUrl = "jdbc:postgresql://" + uri.getHost();
+        if (uri.getPort() != -1) {
+            jdbcUrl += ":" + uri.getPort();
+        }
+        jdbcUrl += uri.getPath();
+
+        props.setProperty("db.url", jdbcUrl);
+        props.setProperty("db.username", username);
+        props.setProperty("db.password", password);
+    }
+
+    private static InputStream openProperties() {
+        InputStream resourceStream = DatabaseConnection.class
+                .getClassLoader()
+                .getResourceAsStream(PROPERTIES_FILE);
+        if (resourceStream != null) {
+            return resourceStream;
+        }
+        return tryOpenFromFilesystem();
     }
 
     private static InputStream tryOpenFromFilesystem() {
@@ -78,7 +111,7 @@ public class DatabaseConnection {
                 connection.close();
             }
         } catch (SQLException e) {
-            System.err.println("Помилка закриття підключення: " + e.getMessage());
+            System.err.println("Database close error: " + e.getMessage());
         }
     }
 }

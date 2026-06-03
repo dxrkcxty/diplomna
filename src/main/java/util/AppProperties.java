@@ -25,7 +25,17 @@ public class AppProperties {
             try { inputStream.close(); } catch (Exception ignored) {}
         } catch (Exception ignored) {
         }
+        copyEnv(props, "BREVO_API_KEY", "brevo.apiKey");
+        copyEnv(props, "BREVO_FROM_EMAIL", "brevo.fromEmail");
+        copyEnv(props, "BREVO_FROM_NAME", "brevo.fromName");
         return props;
+    }
+
+    private static void copyEnv(Properties props, String envName, String propertyName) {
+        String value = System.getenv(envName);
+        if (value != null && !value.isBlank()) {
+            props.setProperty(propertyName, value);
+        }
     }
 
     private static InputStream tryOpenFromFilesystem() {
