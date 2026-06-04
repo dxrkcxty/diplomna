@@ -18,11 +18,10 @@ public class AppProperties {
                         .getClassLoader()
                         .getResourceAsStream(PROPERTIES_FILE);
             }
-            if (inputStream == null) {
-                return props;
+            if (inputStream != null) {
+                props.load(inputStream);
+                try { inputStream.close(); } catch (Exception ignored) {}
             }
-            props.load(inputStream);
-            try { inputStream.close(); } catch (Exception ignored) {}
         } catch (Exception ignored) {
         }
         copyEnv(props, "BREVO_API_KEY", "brevo.apiKey");
