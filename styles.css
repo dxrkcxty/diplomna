@@ -73,6 +73,48 @@ body {
     min-height: 100vh;
 }
 
+body:not(.theme-dark) .home-page {
+    background: linear-gradient(180deg, #f8fbff 0%, #eef7f1 54%, #f7fafc 100%) !important;
+}
+
+body:not(.theme-dark) .home-page__image {
+    opacity: 0.08 !important;
+    filter: saturate(0.85);
+}
+
+body:not(.theme-dark) .home-page__overlay {
+    background: linear-gradient(180deg, rgba(248,251,255,0.94) 0%, rgba(238,247,241,0.78) 48%, rgba(247,250,252,0.96) 100%) !important;
+}
+
+body:not(.theme-dark) .home-page [style*="color:white"],
+body:not(.theme-dark) .home-page [style*="color: white"] {
+    color: var(--text-dark) !important;
+}
+
+body:not(.theme-dark) .home-page [style*="rgba(255,255,255,0.86)"],
+body:not(.theme-dark) .home-page [style*="rgba(255,255,255,0.84)"],
+body:not(.theme-dark) .home-page [style*="rgba(255,255,255,0.78)"],
+body:not(.theme-dark) .home-page [style*="rgba(255,255,255,0.88)"] {
+    color: var(--text-light) !important;
+}
+
+body:not(.theme-dark) .home-page [style*="background: rgba(255,255,255"],
+body:not(.theme-dark) .home-page [style*="background:rgba(255,255,255"] {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border-color: rgba(21, 128, 61, 0.16) !important;
+    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.08) !important;
+}
+
+body:not(.theme-dark) .home-page .btn {
+    color: white !important;
+}
+
+body:not(.theme-dark) .home-page .nav-btn {
+    color: var(--primary-dark);
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(21, 128, 61, 0.22);
+}
+
 .toast {
     position: fixed;
     right: 18px;
