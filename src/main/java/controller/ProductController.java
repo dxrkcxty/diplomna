@@ -102,11 +102,20 @@ public class ProductController implements HttpHandler {
             } else if (method.equals("PUT") && pathParts.length == 4 && "api".equals(pathParts[1]) && "products".equals(pathParts[2])) {
                 if (!checkAuth(exchange, true)) return;
                 long id = Long.parseLong(pathParts[3]);
-                ProductDTO dto = readDtoFromBody(exchange.getRequestBody());
+                String body = readRequestBody(exchange.getRequestBody());
+                Map<String, String> params = parseFormBody(body);
+                ProductDTO dto = readDtoFromParams(params);
                 try { ValidationUtil.validate(dto); } catch (IllegalArgumentException e) {
                     status = 400; response = toError(400, e.getMessage()); sendResponse(exchange, status, response); return;
                 }
                 Product product = fromDTO(dto);
+                if (!params.containsKey("discountPercent") && !params.containsKey("discountAmount")) {
+                    Product existing = productService.getById(id);
+                    if (existing != null) {
+                        product.setDiscountPercent(existing.getDiscountPercent());
+                        product.setDiscountAmount(existing.getDiscountAmount());
+                    }
+                }
                 Product updated = productService.update(id, product);
                 if (updated == null) { status = 404; response = toError(404, "Not found"); }
                 else response = toJsonFromProduct(updated);
@@ -233,6 +242,10 @@ public class ProductController implements HttpHandler {
         return sb.toString();
     }
     private ProductDTO readDtoFromBody(InputStream is) throws IOException {
+        return readDtoFromParams(parseFormBody(readRequestBody(is)));
+    }
+
+    private String readRequestBody(InputStream is) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
         StringBuilder body = new StringBuilder();
         String line;
@@ -241,7 +254,10 @@ public class ProductController implements HttpHandler {
         }
         String bodyStr = body.toString();
         if (bodyStr == null || bodyStr.isEmpty()) bodyStr = "";
-        
+        return bodyStr;
+    }
+
+    private Map<String, String> parseFormBody(String bodyStr) throws IOException {
         Map<String, String> params = new HashMap<>();
         String[] parts = bodyStr.split("&");
         for (String part : parts) {
@@ -252,7 +268,10 @@ public class ProductController implements HttpHandler {
             String value = URLDecoder.decode(part.substring(eqIndex + 1), "UTF-8");
             params.put(key, value);
         }
-        
+        return params;
+    }
+
+    private ProductDTO readDtoFromParams(Map<String, String> params) {
         long id = 0;
         try {
             String idStr = params.getOrDefault("id", "0");

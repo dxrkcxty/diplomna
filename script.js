@@ -179,7 +179,19 @@ class ProductManager {
 
         try {
             const categoryId = updatedProduct.categoryId || this.resolveCategoryIdForType(updatedProduct.type) || 0;
-            const formData = `id=${id}&name=${encodeURIComponent(updatedProduct.name || '')}&price=${encodeURIComponent(updatedProduct.price || 0)}&categoryId=${encodeURIComponent(categoryId)}&type=${encodeURIComponent(updatedProduct.type || '')}&size=${encodeURIComponent(updatedProduct.size || '')}&gender=${encodeURIComponent(updatedProduct.gender || '')}&imageUrl=${encodeURIComponent(updatedProduct.imageUrl || '')}`;
+            const existingProduct = this.products.find((product) => String(product.id) === String(id)) || {};
+            const formData = new URLSearchParams({
+                id: String(id),
+                name: updatedProduct.name || '',
+                price: String(updatedProduct.price || 0),
+                categoryId: String(categoryId),
+                type: updatedProduct.type || '',
+                size: updatedProduct.size || '',
+                gender: updatedProduct.gender || '',
+                imageUrl: updatedProduct.imageUrl || '',
+                discountPercent: String(updatedProduct.discountPercent ?? existingProduct.discountPercent ?? ''),
+                discountAmount: String(updatedProduct.discountAmount ?? existingProduct.discountAmount ?? '')
+            });
             const headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 ...(typeof authManager !== 'undefined' ? authManager.getAuthHeader() : {})
