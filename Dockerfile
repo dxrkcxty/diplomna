@@ -12,7 +12,6 @@ COPY --from=build /app/target/lib lib
 COPY --from=build /app/*.html ./
 COPY --from=build /app/*.css ./
 COPY --from=build /app/*.js ./
-COPY --from=build /app/*.json ./
 COPY --from=build /app/assets assets
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
