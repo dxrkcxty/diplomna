@@ -4,6 +4,45 @@ function apiUrl(path) {
     return `${API_BASE_URL}${path}`;
 }
 
+(function setupNotifications() {
+    function notificationDuration(message) {
+        const length = String(message || '').length;
+        return Math.min(9000, Math.max(2200, 1800 + length * 45));
+    }
+
+    function showNotification(message) {
+        const text = String(message ?? '').trim();
+        if (!text) return;
+
+        if (!document.body) {
+            setTimeout(() => showNotification(text), 0);
+            return;
+        }
+
+        let container = document.getElementById('notificationContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notificationContainer';
+            container.className = 'notification-container';
+            document.body.appendChild(container);
+        }
+
+        const item = document.createElement('div');
+        item.className = 'notification';
+        item.textContent = text;
+        item.addEventListener('click', () => item.remove());
+        container.appendChild(item);
+
+        setTimeout(() => {
+            item.classList.add('notification--hide');
+            setTimeout(() => item.remove(), 180);
+        }, notificationDuration(text));
+    }
+
+    window.showNotification = showNotification;
+    window.alert = showNotification;
+}());
+
 class AuthManager {
     constructor() {
         this.token = localStorage.getItem('token');
