@@ -28,10 +28,10 @@ public class EmailService {
         return !apiKey.isBlank() && !fromEmail.isBlank();
     }
 
-    public void sendPasswordResetCode(String toEmail, String code) {
+    public boolean sendPasswordResetCode(String toEmail, String code) {
         if (!isConfigured()) {
-            System.err.println("Brevo not configured; reset email not sent.");
-            return;
+            System.err.println("Brevo not configured; set BREVO_API_KEY and BREVO_FROM_EMAIL on Render.");
+            return false;
         }
         String subject = "StyleHub: код відновлення пароля";
         String text = "Ваш код для відновлення пароля: " + code + "\n"
@@ -52,9 +52,12 @@ public class EmailService {
             HttpResponse<String> res = http.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (res.statusCode() < 200 || res.statusCode() >= 300) {
                 System.err.println("Brevo send failed: status=" + res.statusCode() + " body=" + res.body());
+                return false;
             }
+            return true;
         } catch (Exception e) {
             System.err.println("Brevo send error: " + e.getMessage());
+            return false;
         }
     }
 

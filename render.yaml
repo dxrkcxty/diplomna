@@ -10,3 +10,9 @@ services:
         sync: false
       - key: PGSSLMODE
         value: require
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_FROM_EMAIL
+        sync: false
+      - key: BREVO_FROM_NAME
+        value: StyleHub

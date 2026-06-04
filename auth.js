@@ -266,7 +266,8 @@ class AuthManager {
                         </div>
                     </div>
                 `;
-                userInfo.style.display = 'inline-block';
+                this.placeSidebarUserInfo(userInfo);
+                userInfo.style.display = 'block';
             }
             
             if (addProductBtn) {
@@ -315,6 +316,13 @@ class AuthManager {
             if (usersBtn) usersBtn.style.display = 'none';
             if (bonusesBtn) bonusesBtn.style.display = 'none';
             this.renderProfileBanner();
+        }
+    }
+
+    placeSidebarUserInfo(userInfo) {
+        const sidebarNav = document.querySelector('.sidebar__nav');
+        if (sidebarNav && userInfo.parentElement !== sidebarNav) {
+            sidebarNav.appendChild(userInfo);
         }
     }
 

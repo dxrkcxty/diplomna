@@ -257,17 +257,34 @@ public class UserController implements HttpHandler {
                 String accountEmail = data.getOrDefault("accountEmail", data.getOrDefault("email", "")).trim();
                 String recoveryEmail = data.getOrDefault("recoveryEmail", "").trim();
                 if (recoveryEmail.isBlank()) recoveryEmail = accountEmail;
+                if (accountEmail.isBlank() || recoveryEmail.isBlank()) {
+                    status = 400;
+                    response = toError(400, "Вкажіть email акаунта і email для отримання коду");
+                    sendResponse(exchange, status, response);
+                    return;
+                }
+
+                User u = userService.findByEmail(accountEmail);
+                if (u == null) {
+                    status = 404;
+                    response = toError(404, "Акаунт з таким email не знайдено");
+                    sendResponse(exchange, status, response);
+                    return;
+                }
+
+                String code = String.valueOf(100000 + new java.util.Random().nextInt(900000));
+                LocalDateTime expires = LocalDateTime.now().plusMinutes(15);
+                boolean sent = emailService.sendPasswordResetCode(recoveryEmail, code);
+                if (!sent) {
+                    status = 503;
+                    response = toError(503, "Пошта для відновлення не налаштована на сервері");
+                    sendResponse(exchange, status, response);
+                    return;
+                }
+
+                RESET_REQUESTS.put(accountEmail.toLowerCase(), new ResetRequest(code, expires, recoveryEmail.toLowerCase()));
                 response = "{\"ok\":true}";
                 status = 200;
-                if (!accountEmail.isBlank() && !recoveryEmail.isBlank()) {
-                    User u = userService.findByEmail(accountEmail);
-                    if (u != null) {
-                        String code = String.valueOf(100000 + new java.util.Random().nextInt(900000));
-                        LocalDateTime expires = LocalDateTime.now().plusMinutes(15);
-                        RESET_REQUESTS.put(accountEmail.toLowerCase(), new ResetRequest(code, expires, recoveryEmail.toLowerCase()));
-                        emailService.sendPasswordResetCode(recoveryEmail, code);
-                    }
-                }
             } else if (method.equals("POST")
                     && (
                         (pathParts.length == 5 && "api".equals(pathParts[1]) && "users".equals(pathParts[2]) && "password-reset".equals(pathParts[3]) && "confirm".equals(pathParts[4]))
@@ -537,6 +554,7 @@ public class UserController implements HttpHandler {
             case 403 -> "Forbidden";
             case 404 -> "Not Found";
             case 405 -> "Method Not Allowed";
+            case 503 -> "Service Unavailable";
             case 500 -> "Internal Server Error";
             default -> "Error";
         };

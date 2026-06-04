@@ -252,8 +252,18 @@
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `accountEmail=${encodeURIComponent(accountEmail)}&recoveryEmail=${encodeURIComponent(recoveryEmail)}`
                 });
-                if (res.ok) alert('Якщо email існує — код надіслано.');
-                else alert('Не вдалося надіслати код');
+                const raw = await res.text();
+                if (res.ok) {
+                    alert('Код надіслано на пошту.');
+                } else {
+                    let message = raw || 'Не вдалося надіслати код';
+                    try {
+                        const error = JSON.parse(raw);
+                        message = error.message || message;
+                    } catch (e) {
+                    }
+                    alert(message);
+                }
             } catch (err) {
                 alert('Помилка з’єднання');
             }
