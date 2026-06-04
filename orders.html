@@ -722,12 +722,34 @@
                 <div class="chat-msg">
                     <div class="chat-meta">
                         <span><strong>${escapeHtml(m.senderRole || '')}</strong> — ${escapeHtml(maskEmail(m.senderEmail || ''))}</span>
-                        <span>${escapeHtml(m.createdAt || '')}</span>
+                        <span>${escapeHtml(formatChatTime(m.createdAt || ''))}</span>
                     </div>
                     <div class="chat-text">${escapeHtml(m.message || '')}</div>
                 </div>
             `).join('');
             box.scrollTop = box.scrollHeight;
+        }
+
+        function formatChatTime(value) {
+            const raw = String(value || '').trim();
+            if (!raw) return '';
+
+            let normalized = raw;
+            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) {
+                normalized = raw.replace(' ', 'T') + 'Z';
+            }
+
+            const date = new Date(normalized);
+            if (Number.isNaN(date.getTime())) return raw;
+
+            return new Intl.DateTimeFormat('uk-UA', {
+                timeZone: 'Europe/Kyiv',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
         }
 
         function maskEmail(email) {

@@ -13,8 +13,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 
 public class OrderController implements HttpHandler {
     private final OrderService orderService;
@@ -155,7 +154,7 @@ public class OrderController implements HttpHandler {
                     msg.setSenderEmail(tokenData[0]);
                     msg.setSenderRole(tokenData[1]);
                     msg.setMessage(messageText.trim());
-                    msg.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    msg.setCreatedAt(Instant.now().toString());
                     OrderMessage created = messageRepository.insert(msg);
                     response = toJsonMessage(created);
                     status = 201;
