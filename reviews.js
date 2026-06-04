@@ -57,7 +57,6 @@ class ReviewManager {
             select.appendChild(opt);
         });
 
-        // If user has no purchases, keep subject as SITE
         const productRadio = document.querySelector('input[name="subjectType"][value="PRODUCT"]');
         if (productRadio) {
             productRadio.disabled = list.length === 0;

@@ -61,13 +61,13 @@ public class Application {
 
         try {
             if (!userService.existsByEmail("admin@gmail.com")) {
-                User admin = new User(0, "admin@gmail.com", "admin123", "ADMIN", List.of());
+                User admin = new User(0, "admin@gmail.com", "admin123", "ADMIN", "Адмін", "StyleHub", List.of());
                 userService.create(admin);
                 System.out.println("Тестовий адміністратор створено: admin@gmail.com / admin123");
             }
 
             if (!userService.existsByEmail("user@gmail.com")) {
-                User user = new User(0, "user@gmail.com", "user123", "USER", List.of());
+                User user = new User(0, "user@gmail.com", "user123", "USER", "Користувач", "StyleHub", List.of());
                 userService.create(user);
                 System.out.println("Тестовий користувач створено: user@gmail.com / user123");
             }

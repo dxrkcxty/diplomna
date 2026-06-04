@@ -29,11 +29,8 @@ class AuthManager {
         try {
             const res = await fetch(apiUrl('/api/users/me'), { headers: { ...this.getAuthHeader() } });
             if (!res.ok) {
-                if (res.status === 401 || res.status === 403) {
-                    this.token = null;
-                    this.user = null;
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
+                if (res.status === 401 || res.status === 403 || res.status === 404) {
+                    this.clearSession();
                 }
                 return;
             }
@@ -187,10 +184,7 @@ class AuthManager {
     }
 
     logout() {
-        this.token = null;
-        this.user = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        this.clearSession();
         this.updateUI();
         const menu = document.getElementById('userMenu');
         if (menu) {
@@ -201,12 +195,19 @@ class AuthManager {
         window.location.href = 'index.html';
     }
 
+    clearSession() {
+        this.token = null;
+        this.user = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+    }
+
     isAuthenticated() {
         return this.token !== null && this.token !== '' && this.token !== 'null';
     }
 
     isAdmin() {
-        return this.user && this.user.role === 'ADMIN';
+        return !!(this.user && String(this.user.role || '').toUpperCase() === 'ADMIN');
     }
 
     getAuthHeader() {

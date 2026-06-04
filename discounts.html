@@ -218,14 +218,12 @@
 
                 let html = '<div class="pagination-controls">';
                 
-                // Кнопка "Попередня"
                 if (this.currentPage > 1) {
                     html += `<button class="pagination-btn" onclick="discountManager.goToPage(${this.currentPage - 1})">‹ Попередня</button>`;
                 } else {
                     html += `<button class="pagination-btn" disabled>‹ Попередня</button>`;
                 }
                 
-                // Номери сторінок
                 const maxVisible = 5;
                 let startPage = Math.max(1, this.currentPage - Math.floor(maxVisible / 2));
                 let endPage = Math.min(totalPages, startPage + maxVisible - 1);
@@ -256,7 +254,6 @@
                     html += `<button class="pagination-btn" onclick="discountManager.goToPage(${totalPages})">${totalPages}</button>`;
                 }
                 
-                // Кнопка "Наступна"
                 if (this.currentPage < totalPages) {
                     html += `<button class="pagination-btn" onclick="discountManager.goToPage(${this.currentPage + 1})">Наступна ›</button>`;
                 } else {
@@ -357,7 +354,6 @@
             document.getElementById('registerModal').style.display = 'none';
         }
 
-        // Ініціалізація
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 discountManager = new DiscountManager();

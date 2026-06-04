@@ -630,7 +630,6 @@
                         const updated = JSON.parse(responseText);
                         mergeOrderUpdate(updated);
                     } catch (e) {
-                        /* ignore parse */
                     }
                     await loadOrders();
                     refreshOrdersStatsIfOpen();
@@ -674,7 +673,8 @@
                 if (response.ok) {
                     try {
                         mergeOrderUpdate(JSON.parse(responseText));
-                    } catch (e) { /* ignore */ }
+                    } catch (e) {
+                    }
                     await loadOrders();
                     refreshOrdersStatsIfOpen();
                 } else {

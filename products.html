@@ -289,7 +289,6 @@
             }
         }
 
-        // Кнопка показу/приховування пароля для реєстрації
         document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('registerPassword');
             if (passwordInput.type === 'password') {
@@ -301,7 +300,6 @@
             }
         });
 
-        // Кнопка показу/приховування пароля для логіну
         document.getElementById('toggleLoginPassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('loginPassword');
             if (passwordInput.type === 'password') {
@@ -320,13 +318,11 @@
             const result = await authManager.login(email, password);
             if (result.success) {
                 closeLoginModal();
-                // Оновлюємо UI після входу
                 authManager.updateUI();
                 if (typeof cartManager !== 'undefined') {
                     cartManager.updateCartBadge();
                     cartManager.updateFavoritesBadge();
                 }
-                // Перезавантажуємо сторінку для коректного відображення
                 window.location.reload();
             } else {
                 alert(result.message);
@@ -342,7 +338,6 @@
             const firstName = document.getElementById('registerFirstName')?.value?.trim();
             const lastName = document.getElementById('registerLastName')?.value?.trim();
             
-            // Перевірка на порожні поля
             if (!firstName) {
                 alert("Будь ласка, введіть ім'я");
                 return;
@@ -363,13 +358,11 @@
             const result = await authManager.register(email, password, role);
             if (result.success) {
                 closeRegisterModal();
-                // Оновлюємо UI після реєстрації
                 authManager.updateUI();
                 if (typeof cartManager !== 'undefined') {
                     cartManager.updateCartBadge();
                     cartManager.updateFavoritesBadge();
                 }
-                // Перезавантажуємо сторінку для коректного відображення
                 window.location.reload();
             } else {
                 alert(result.message);

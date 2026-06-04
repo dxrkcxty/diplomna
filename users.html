@@ -127,9 +127,7 @@
         }
 
         function ensureAdminOrRedirect() {
-            const userStr = localStorage.getItem('user');
-            const user = userStr ? JSON.parse(userStr) : null;
-            if (!user || user.role !== 'ADMIN') {
+            if (!authManager || !authManager.isAdmin()) {
                 window.location.href = 'index.html?admin=1&login=1';
                 return false;
             }
@@ -292,6 +290,10 @@
         }
 
         async function loadUsers() {
+            if (typeof authManager !== 'undefined') {
+                await authManager.refreshMe();
+                authManager.updateUI();
+            }
             if (!ensureAdminOrRedirect()) return;
 
             const container = document.getElementById('usersContainer');
@@ -307,6 +309,11 @@
 
             if (!res.ok) {
                 const text = await res.text();
+                if (res.status === 401 || res.status === 403) {
+                    authManager.clearSession();
+                    container.innerHTML = `<div style="color: var(--danger-color); font-weight:700;">Сесія адміністратора застаріла. Увійдіть знову як admin@gmail.com.</div>`;
+                    return;
+                }
                 container.innerHTML = `<div style="color: var(--danger-color); font-weight:700;">Помилка завантаження користувачів</div><pre style="white-space:pre-wrap; margin-top:0.5rem;">${escapeHtml(text)}</pre>`;
                 return;
             }

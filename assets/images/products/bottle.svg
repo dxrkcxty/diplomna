@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-label="Sports bottle">
-  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cffafe"/><stop offset="1" stop-color="#ecfccb"/></linearGradient><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22c55e"/><stop offset="1" stop-color="#0f766e"/></linearGradient></defs>
-  <rect width="900" height="600" fill="url(#bg)"/>
-  <path d="M392 120h116v68l42 62v206c0 38-31 69-69 69h-62c-38 0-69-31-69-69V250l42-62v-68z" fill="url(#b)"/>
-  <path d="M384 120h132v52H384z" fill="#111827"/>
-  <path d="M374 318h152v92H374z" fill="#f8fafc" opacity=".9"/>
-  <path d="M410 364h80" stroke="#15803d" stroke-width="18" stroke-linecap="round"/>
-</svg>
