@@ -80,7 +80,7 @@ class CartManager {
     }
 
     normalizeProductForStorage(product) {
-        const originalPrice = Number(product?.price || 0);
+        const originalPrice = Number(product?.originalPrice ?? product?.price ?? 0);
         const discountPercent = Number(product?.discountPercent || 0);
         const discountAmount = Number(product?.discountAmount || 0);
 
