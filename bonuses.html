@@ -398,10 +398,9 @@
                 }
                 renderEligibleOrders();
                 const totalFromOrder = Number(lastOrder.totalAmount || 0);
-                const totalFallback = (lastOrder.productIds || []).reduce((sum, id) => {
-                    const p = map[id];
-                    return sum + (p ? getFinalPrice(p) : 0);
-                }, 0);
+                const totalFallback = Array.isArray(lastOrder.items)
+                    ? lastOrder.items.reduce((sum, item) => sum + Number(item.price || 0), 0)
+                    : 0;
                 const total = totalFromOrder > 0 ? totalFromOrder : totalFallback;
                 if (total <= 0) {
                     infoEl.textContent = `Останнє замовлення #${lastOrder.id}. Сума не визначена, але колесо доступне лише після реальних покупок.`;
